@@ -1,13 +1,22 @@
+import { motion } from "framer-motion";
 import styled, { css } from "styled-components";
 
 export const Container = styled.div`
   display: flex;
   height: 100vh;
   background: #f7f7f7;
+  .mobile-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
 `;
 
-export const Sidebar = styled.div<{ minimized: boolean }>`
-  min-width: ${({ minimized }) => (minimized ? "60px" : "260px")};
+export const Sidebar = styled(motion.div)<{ minimized: boolean }>`
   background: #f9f9fa;
   display: flex;
   flex-direction: column;
@@ -15,8 +24,7 @@ export const Sidebar = styled.div<{ minimized: boolean }>`
   height: 100vh;
   position: relative;
   padding-top: 12px;
-  transition: width 0.3s ease-in-out, min-width 0.3s ease-in-out,
-    padding 0.3s ease-in-out;
+  overflow: hidden;
   @media (max-width: 768px) {
     position: fixed;
     left: 0;

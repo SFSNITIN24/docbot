@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   AIIcon,
   ArrowDownIcon,
@@ -62,6 +62,10 @@ import {
 import { AuthLogo } from "../../utils/images";
 import CommonButton from "../../components/CommonButton";
 import { useNavigate } from "react-router-dom";
+import {
+  IconWrapper,
+  CommonMotionDropdown,
+} from "../../components/CommonStyle";
 
 const navItems = [
   { icon: <NewChatPencilIcon />, label: "New chat" },
@@ -121,10 +125,13 @@ const DashboardLayout: React.FC = () => {
     typeof window !== "undefined" &&
       window.matchMedia("(max-width: 768px)").matches
   );
+
   const login = false;
-  const handleClick = (path: string) => () => {
-    navigate(path);
-  };
+
+  const handleClick = useCallback(
+    (path: string) => () => navigate(path),
+    [navigate]
+  );
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 768px)");
@@ -159,33 +166,29 @@ const DashboardLayout: React.FC = () => {
         <div
           className="mobile-sidebar-overlay"
           onClick={() => setMobileSidebarOpen(false)}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0,0,0,0.3)",
-            zIndex: 1000,
-          }}
         />
       )}
       <Sidebar
         minimized={isMobile ? false : sidebarMinimized}
         className={mobileSidebarOpen ? "mobile-open" : ""}
         onClick={(e) => e.stopPropagation()}
+        animate={{
+          width: isMobile ? 260 : sidebarMinimized ? 60 : 260,
+        }}
+        initial={false}
+        transition={{
+          duration: 0.4,
+          ease: "easeInOut",
+        }}
       >
         <SidebarTop>
           {!sidebarMinimized && (
             <Logo src={AuthLogo} alt="Logo" minimized={sidebarMinimized} />
           )}
           {isMobile ? (
-            <div
-              onClick={() => setMobileSidebarOpen(false)}
-              style={{ cursor: "pointer" }}
-            >
-              <ModalCrossIcon />
-            </div>
+            <IconWrapper onClick={() => setMobileSidebarOpen(false)}>
+              <ModalCrossIcon color="black" />
+            </IconWrapper>
           ) : (
             <ToggleButton
               aria-label={
@@ -237,7 +240,9 @@ const DashboardLayout: React.FC = () => {
                         <MoreIconWrapper
                           onClick={(e) => {
                             e.stopPropagation();
-                            setOpenMenuKey(menuKey);
+                            setOpenMenuKey((prev) =>
+                              prev === menuKey ? null : menuKey
+                            );
                           }}
                           style={{
                             visibility:
@@ -286,19 +291,9 @@ const DashboardLayout: React.FC = () => {
       <MainSection>
         <TopBar>
           <MobileMenuIcon className="mobile-menu-icon">
-            <button
-              aria-label="Open sidebar"
-              onClick={() => setMobileSidebarOpen(true)}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontSize: 24,
-                marginRight: 16,
-              }}
-            >
+            <IconWrapper onClick={() => setMobileSidebarOpen(true)}>
               <HamburgerMenuIcon />
-            </button>
+            </IconWrapper>
           </MobileMenuIcon>
           <CustomDropdown ref={dropdownRef}>
             <CustomDropdownTrigger
@@ -307,7 +302,7 @@ const DashboardLayout: React.FC = () => {
               <span>{selectedFeature || "The Current Feature"}</span>
               <ArrowDownIcon />
             </CustomDropdownTrigger>
-            {dropdownOpen && (
+            <CommonMotionDropdown open={dropdownOpen} className="open">
               <CustomDropdownMenu className="open">
                 {featureOptions?.map((option) => (
                   <CustomDropdownOption
@@ -329,7 +324,7 @@ const DashboardLayout: React.FC = () => {
                   </CustomDropdownOption>
                 ))}
               </CustomDropdownMenu>
-            )}
+            </CommonMotionDropdown>
           </CustomDropdown>
           {login ? (
             <>
