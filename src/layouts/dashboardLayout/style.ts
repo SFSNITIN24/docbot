@@ -5,6 +5,8 @@ export const Container = styled.div`
   display: flex;
   height: 100vh;
   background: #f7f7f7;
+  width: 100%;
+  overflow: hidden;
   .mobile-sidebar-overlay {
     position: fixed;
     top: 0;
@@ -17,6 +19,8 @@ export const Container = styled.div`
 `;
 
 export const Sidebar = styled(motion.div)<{ minimized: boolean }>`
+  min-width: ${({ minimized }) => (minimized ? "60px" : "260px")};
+  width: ${({ minimized }) => (minimized ? "60px" : "260px")};
   background: #f9f9fa;
   display: flex;
   flex-direction: column;
@@ -76,6 +80,11 @@ export const ToggleButton = styled.button`
   justify-content: center;
   height: 32px;
   width: 32px;
+  &:hover {
+    background: #e7e7e7;
+    padding: 4px;
+    border-radius: 6px;
+  }
 `;
 
 export const Nav = styled.ul<{ minimized: boolean }>`
@@ -143,6 +152,7 @@ export const ChatNavItem = styled.li<{ minimized: boolean }>`
 
 export const NavText = styled.span<{ minimized: boolean }>`
   display: ${({ minimized }) => (minimized ? "none" : "inline")};
+  transition: opacity 0.3s ease;
 `;
 export const ChatNavText = styled.span<{ minimized: boolean }>`
   display: ${({ minimized }) => (minimized ? "none" : "inline")};
@@ -201,6 +211,8 @@ export const MainSection = styled.div`
   flex-direction: column;
   background: #fff;
   padding: 12px 30px;
+  height: 100%;
+  min-height: 0;
 `;
 
 export const TopBar = styled.div`
@@ -255,6 +267,37 @@ export const MainContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
+
+  .user-message {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    .message-text {
+      background-color: #e7e7e7;
+    }
+  }
+  .bot-message {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    .message-text {
+      background-color: transparent;
+    }
+  }
+  .message-text {
+    border-radius: 6px 0px 6px 6px;
+    padding: 10px 16px;
+    font-family: "Manrope";
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 150%;
+    color: #1c1c1c;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-width: 70%;
+    box-sizing: border-box;
+  }
 `;
 
 export const ChatCard = styled.div`
@@ -262,6 +305,10 @@ export const ChatCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative !important ;
+  height: 100%;
+  overflow-y: auto;
+  justify-content: center !important;
 `;
 
 export const BotImage = styled.img`
@@ -483,11 +530,15 @@ export const RightAdContainer = styled.div`
   color: #b0b0b0;
   font-size: 2rem;
   height: 100%;
+  overflow: hidden;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 export const AdBanner = styled.div`
   width: 100%;
-  height: 80px;
+  min-height: 150px;
   background: #f5f5f5;
   margin-bottom: 24px;
   margin-top: 32px;
@@ -497,6 +548,9 @@ export const AdBanner = styled.div`
   justify-content: center;
   color: #b0b0b0;
   font-size: 2rem;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 export const MobileMenuIcon = styled.div`
@@ -531,4 +585,49 @@ export const ButtonWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+`;
+export const MainContentWrapper = styled.div<{ showAd: boolean }>`
+  flex: 1 1 auto;
+  min-height: 0;
+  scroll-behavior: smooth;
+  position: relative;
+  overflow-x: hidden;
+  display: flex;
+  margin-top: ${({ showAd }) => (showAd ? "24px" : "0px")};
+`;
+
+export const DropDownWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: absolute;
+  top: 10px;
+  right: -30px;
+  min-width: 220px;
+  border-radius: 16px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  padding: 12px;
+  z-index: 200;
+`;
+export const AvatarDropdownitemStyle = styled.div<{ label?: string }>`
+  height: 40px;
+  padding: 8px 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: ${({ label }) => (label === "Logout" ? "#fb4a49" : "#1c1c1c")};
+  .avatar-text {
+    font-family: "Manrope";
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 150%;
+  }
+  &:hover {
+    background: #62a8bf;
+    color: ${({ label }) => (label === "Logout" ? "#fb4a49" : "#ffffff")};
+  }
 `;

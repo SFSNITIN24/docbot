@@ -70,7 +70,7 @@ const RadioCard = styled.div<{ selected: boolean }>`
   border-radius: 10px;
   background: #fff;
   cursor: pointer;
-  border: 2px solid transparent;
+  border: 2px solid #C8C8C8;
   transition: border 0.2s;
   ${({ selected }) =>
     selected &&

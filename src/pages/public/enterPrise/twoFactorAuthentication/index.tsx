@@ -7,7 +7,6 @@ import { ArrowLeftIcon } from "../../../../utils/svg";
 import CommonRadioCardGroup, {
   type RadioCardOption,
 } from "../../../../components/CommonRadioCardGroup";
-import CommonCheckbox from "../../../../components/CommonCheckbox";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const accountOptions: RadioCardOption[] = [
@@ -80,19 +79,8 @@ const TwoFactorAuthenticationPage: React.FC = () => {
         >
           <CommonRadioCardGroup options={accountOptions} flexDirection="row" />
         </Form.Item>
-        <div className="remember-forget">
-          <Form.Item
-            name="promotionalDeals"
-            valuePropName="checked"
-            style={{ marginBottom: "0px" }}
-          >
-            <div className="remember-me">
-              <CommonCheckbox />
-              <p>opt out of promotional deals</p>
-            </div>
-          </Form.Item>
-        </div>
-        <Form.Item  style={{ marginBottom: "0px" }}>
+        
+        <Form.Item  style={{ marginBottom: "0px" ,marginTop:"20px"}}>
           <CommonButton bgColor="#62A8BF" color="#fff" bgHoverColor="#62A8BF">
             Continue <ArrowLeftIcon />
           </CommonButton>
@@ -109,40 +97,7 @@ const FormWrapper = styled(Form)`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  .remember-forget {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    a {
-      font-family: "Manrope";
-      font-weight: 500;
-      font-size: 16px;
-      line-height: 150%;
-      text-align: right;
-      color: #62a8bf;
-      text-decoration: none;
-      @media (max-width: 480px) {
-        font-size: 14px;
-      }
-    }
-    .remember-me {
-      display: flex;
-      align-items: center;
-      font-family: "Manrope";
-      font-weight: 500;
-      font-size: 16px;
-      color: #1c1c1c;
-      gap: 2px;
-      @media (max-width: 480px) {
-        font-size: 14px;
-      }
-    }
-    @media (max-width: 480px) {
-      flex-direction: column;
-      align-items: normal;
-    }
-  }
+  
   .two-factor-switch {
     width: 100%;
     display: flex;

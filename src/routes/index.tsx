@@ -11,6 +11,7 @@ import BasicInfoPage from "../pages/public/enterPrise/basicInfo";
 import DashBoardPage from "../pages/private/dashboard";
 import SubscriptionPage from "../pages/public/subscription";
 import DashboardLayout from "../layouts/dashboardLayout/DashboardLayout";
+import OrganizationSetting from "../pages/public/organizationSetting";
 
 const Routing = () => {
   return (
@@ -51,6 +52,10 @@ const Routing = () => {
         <Route
           path="/dashboard-layout"
           element={<DashboardLayout />}
+        />
+        <Route
+          path="/organization-setting"
+          element={<OrganizationSetting />}
         />
         
       </Routes>

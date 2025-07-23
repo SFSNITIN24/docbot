@@ -20,6 +20,7 @@ const CheckboxWrapper = styled.label`
     width: 18px;
     height: 18px;
     margin-right: 6px;
+    margin-left:2px;
     cursor: pointer;
     border-radius: 4px;
     position: relative;
@@ -35,7 +36,7 @@ const CheckboxWrapper = styled.label`
     content: "";
     display: block;
     position: absolute;
-    left: 5px;
+    left: 8px;
     top: 1px;
     width: 7px;
     height: 10px;

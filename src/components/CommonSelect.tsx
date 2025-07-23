@@ -32,8 +32,6 @@ const StyledSelect = styled(Select<string>)<{ $border?: string }>`
     font-weight: 400;
     font-size: 16px;
     line-height: 150%;
-    
-    height: 56px !important;
     display: flex;
     align-items: center;
     background: #ffffff !important;
@@ -67,7 +65,7 @@ const CommonSelect: React.FC<CommonSelectProps> = ({
   style,
   allowClear = false,
   suffixIcon = <DownArrowIcon />, 
-  border, // Add border prop
+  border, 
 }) => {
   const handleChange: SelectProps<string>["onChange"] = (val, option) => {
     if (onChange) onChange(val, option);

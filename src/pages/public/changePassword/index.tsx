@@ -20,23 +20,19 @@ const ChnagePasswordPage: React.FC = () => {
   return (
     <Container>
       <Header>
-        <Title>
-          Change Password
-        </Title>
+        <Title>Change Password</Title>
         <Description>
-          At least 9 characters, with uppercase and <br/>
-lowercase letters.
+          At least 9 characters, with uppercase and <br />
+          lowercase letters.
         </Description>
-
-
       </Header>
 
-    
-    
       <FormWrapper layout="vertical" onFinish={onFinish}>
         <Form.Item
           name="oldpassword"
-          rules={[{ required: true, message: "Please enter your Old Password" }]}
+          rules={[
+            { required: true, message: "Please enter your Old Password" },
+          ]}
           style={{ marginBottom: "0px" }}
         >
           <CommonInput
@@ -50,7 +46,9 @@ lowercase letters.
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: "Please enter your New Password" }]}
+          rules={[
+            { required: true, message: "Please enter your New Password" },
+          ]}
           style={{ marginBottom: "0px" }}
         >
           <CommonInput
@@ -65,7 +63,7 @@ lowercase letters.
         <Form.Item
           name="reenterpassword"
           dependencies={["password"]}
-          rules={[ 
+          rules={[
             { required: true, message: "Please enter your Re-enter password" },
             ({ getFieldValue }) => ({
               validator(_, value) {
@@ -87,32 +85,36 @@ lowercase letters.
             eyeOffIcon={<EyeSlashIcon />}
           />
         </Form.Item>
-        <Form.Item  style={{ marginBottom: "0px", marginTop: "20px"}}>
-          <CommonButton bgColor="#62A8BF" color="#fff" bgHoverColor="#62A8BF" borderRadius="100px">
+        <Form.Item style={{ marginBottom: "0px", marginTop: "20px" }}>
+          <CommonButton
+            bgColor="#62A8BF"
+            color="#fff"
+            bgHoverColor="#62A8BF"
+            borderRadius="100px"
+          >
             Update
           </CommonButton>
         </Form.Item>
       </FormWrapper>
-      </Container>
+    </Container>
   );
 };
 
 export default ChnagePasswordPage;
 const Container = styled.div`
-display: flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 32px;
-`
+`;
 const Header = styled.div`
-display:  flex;
+  display: flex;
   flex-direction: column;
   gap: 12px;
   text-align: center;
   font-family: "Manrope";
-  
-  `
-  const Title = styled.h2`
+`;
+const Title = styled.h2`
   font-weight: 600;
   font-size: 24px;
   line-height: 120%;
@@ -124,7 +126,6 @@ const Description = styled.p`
   line-height: 150%;
   color: #424242;
 `;
-
 
 const FormWrapper = styled(Form)`
   width: 100%;
