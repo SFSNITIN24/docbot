@@ -1,6 +1,5 @@
-import { combineReducers } from 'redux';
-import counterReducer from './slices/counterSlice';
-
+import { combineReducers } from "redux";
+import authReducer from "./slices/authSlice";
 export const rootReducer = combineReducers({
-  counter: counterReducer,
+  auth: authReducer,
 });

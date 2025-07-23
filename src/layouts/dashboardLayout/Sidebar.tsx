@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   AIIcon,
   ChatThreeDotIcon,
@@ -9,7 +10,9 @@ import {
   UpgradeIcon,
   ModalCrossIcon,
 } from "../../utils/svg";
+import { AuthLogo } from "../../utils/images";
 import { Circle } from "../../components/CommonCircle";
+import { IconWrapper } from "../../components/CommonStyle";
 import {
   AI,
   ChatHistory,
@@ -30,11 +33,13 @@ import {
   ToggleButton,
   UpgradePlan,
 } from "./style";
-import { AuthLogo } from "../../utils/images";
-import { IconWrapper } from "../../components/CommonStyle";
 
-const navItems = [
-  { icon: <NewChatPencilIcon />, label: "New chat" },
+const getNavItems = (navigate: ReturnType<typeof useNavigate>) => [
+  {
+    icon: <NewChatPencilIcon />,
+    label: "New chat",
+    onClick: () => navigate("/chat?model=auto"),
+  },
   { icon: <SearchIcon />, label: "Search chats" },
   { icon: <SidebarFeaturesIcon />, label: "Features" },
 ];
@@ -62,7 +67,7 @@ const chatHistoryGroups = [
   {
     label: "Today",
     items: [
-      { label: "Suggest Monthly Contribu..." },
+      { label: "Suggest Monthly Contribusasasasasasasasasasa" },
       { label: "What Medic We app..." },
       { label: "Other Chat name" },
     ],
@@ -82,6 +87,7 @@ interface SidebarProps {
   openMenuKey: string | null;
   setOpenMenuKey: (value: React.SetStateAction<string | null>) => void;
   setUpgradeModalOpen: (value: React.SetStateAction<boolean>) => void;
+  setDeleteChatModal: (value: React.SetStateAction<boolean>) => void;
 }
 
 const DashboardSidebar: React.FC<SidebarProps> = ({
@@ -93,7 +99,28 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
   openMenuKey,
   setOpenMenuKey,
   setUpgradeModalOpen,
+  setDeleteChatModal
 }) => {
+  const navigate = useNavigate();
+  const navItems = useMemo(() => getNavItems(navigate), [navigate]);
+
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+  const [editedLabel, setEditedLabel] = useState<string>("");
+
+  const handleRenameSubmit = useCallback(
+    async (menuKey: string, newLabel: string) => {
+      try {
+        console.log("Renaming:", menuKey, "=>", newLabel);
+        setEditingKey(null);
+        // await API call here
+      } catch (error) {
+        console.error("Rename failed:", error);
+        alert("Rename failed.");
+      }
+    },
+    []
+  );
+
   return (
     <Sidebar
       minimized={isMobile ? false : sidebarMinimized}
@@ -131,7 +158,11 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
       <SidebarMiddle>
         <Nav minimized={sidebarMinimized}>
           {navItems?.map((item) => (
-            <NavItem key={item.label} minimized={sidebarMinimized}>
+            <NavItem
+              key={item.label}
+              minimized={sidebarMinimized}
+              onClick={item.onClick}
+            >
               <span>{item.icon}</span>
               <NavText minimized={sidebarMinimized}>{item.label}</NavText>
             </NavItem>
@@ -154,6 +185,7 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
                 </SectionLabel>
                 {group?.items?.map((item, idx) => {
                   const menuKey = `${group.label}-${idx}`;
+                  const isEditing = editingKey === menuKey;
                   return (
                     <ChatNavItem
                       key={item.label}
@@ -161,9 +193,31 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
                       style={{ position: "relative" }}
                       onMouseLeave={() => setOpenMenuKey(null)}
                     >
-                      <ChatNavText minimized={sidebarMinimized}>
-                        {item.label}
-                      </ChatNavText>
+                      {isEditing ? (
+                        <input
+                          value={editedLabel}
+                          autoFocus
+                          onChange={(e) => setEditedLabel(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              handleRenameSubmit(menuKey, editedLabel);
+                            }
+                          }}
+                          onBlur={() => setEditingKey(null)}
+                          style={{
+                            flex: 1,
+                            fontSize: 12,
+                            border: "none",
+                            outline: "none",
+                            background: "transparent",
+                          }}
+                        />
+                      ) : (
+                        <ChatNavText minimized={sidebarMinimized}>
+                          {item.label}
+                        </ChatNavText>
+                      )}
+
                       <MoreIconWrapper
                         onClick={(e) => {
                           e.stopPropagation();
@@ -182,14 +236,16 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
                         <DropdownMenu>
                           <DropdownItem
                             onClick={() => {
-                              /* handleRename */
+                              setEditingKey(menuKey);
+                              setEditedLabel(item.label);
+                              setOpenMenuKey(null);
                             }}
                           >
                             Rename
                           </DropdownItem>
                           <DropdownItemDelete
                             onClick={() => {
-                              /* handleDelete */
+                              setDeleteChatModal(true);
                             }}
                           >
                             Delete
@@ -209,16 +265,13 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
         onClick={() => setUpgradeModalOpen(true)}
       >
         <UpgradeIcon />
-
         <div className="upgrade-content">
           <p>Upgrade Plan</p>
-          <span style={{ fontSize: 12 }}>
-            More: Access to the best models
-          </span>
+          <span>More: Access to the best models</span>
         </div>
       </UpgradePlan>
     </Sidebar>
   );
 };
 
-export default DashboardSidebar; 
+export default DashboardSidebar;

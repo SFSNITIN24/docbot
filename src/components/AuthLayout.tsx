@@ -30,7 +30,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             <img src={AuthLogo} alt="auth logo" />
             <TextWrapper>
               {title && <p className="title">{title}</p>}
-              {text && <p className="text">{text}</p>}
+              {text && <p className="text" dangerouslySetInnerHTML={{ __html: text }} />}
               {otherText &&  <p className="other" dangerouslySetInnerHTML={{ __html: otherText }} />}
             </TextWrapper>
             <Content>{children}</Content>

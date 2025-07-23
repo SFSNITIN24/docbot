@@ -12,8 +12,8 @@ interface CommonUpgradeModalProps {
   confirmText?: string;
   cicleColor?: string;
   buttonColor?: string;
-  bgColor?: string;
-  bgHoverColor?: string;
+  bgcolor?: string;
+  bghovercolor?: string;
   borderRadius?: string;
 }
 
@@ -23,8 +23,8 @@ const CommonUpgradeModal: React.FC<CommonUpgradeModalProps> = ({
   onConfirm,
   confirmText = "Submit",
   cicleColor = "#62A8BF",
-  bgColor = "#62A8BF",
-  bgHoverColor = "#62A8BF",
+  bgcolor = "#62A8BF",
+  bghovercolor = "#62A8BF",
   borderRadius = "10px",
 }) => {
   return (
@@ -37,9 +37,9 @@ const CommonUpgradeModal: React.FC<CommonUpgradeModalProps> = ({
       <Title>{title}</Title>
       <Description>{description}</Description>
       <CommonButton
-        bgColor={bgColor}
+        bgcolor={bgcolor}
         color="#fff"
-        bgHoverColor={bgHoverColor}
+        bghovercolor={bghovercolor}
         borderRadius={borderRadius}
         onClick={onConfirm}
       >

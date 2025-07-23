@@ -7,9 +7,9 @@ interface CommonDashboardCardProps {
   title: string;
   description: string;
   className?: string;
-  cardBgColor?: string;
+  cardbgcolor?: string;
   cardTextColor?: string;
-  badgeBgColor?: string;
+  badgebgcolor?: string;
   badgeTextColor?: string;
   contentTextColor?: string;
   onClick?: () => void; 
@@ -21,9 +21,9 @@ const CommonDashboardCard: React.FC<CommonDashboardCardProps> = ({
   title,
   description,
   className,
-  cardBgColor,
+  cardbgcolor,
   cardTextColor,
-  badgeBgColor,
+  badgebgcolor,
   badgeTextColor,
   contentTextColor,
   onClick,
@@ -31,14 +31,14 @@ const CommonDashboardCard: React.FC<CommonDashboardCardProps> = ({
   return (
     <CardContainer
       className={className}
-      $bg={cardBgColor}
+      $bg={cardbgcolor}
       $text={cardTextColor}
       onClick={onClick} 
     >
       <TopRow>
         <ImageWrapper>{image}</ImageWrapper>
         {badge && (
-          <BadgeWrapper $bg={badgeBgColor} $text={badgeTextColor}>
+          <BadgeWrapper $bg={badgebgcolor} $text={badgeTextColor}>
             {badge}
           </BadgeWrapper>
         )}

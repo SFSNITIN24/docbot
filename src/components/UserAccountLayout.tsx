@@ -8,11 +8,13 @@ import { useNavigate } from "react-router-dom";
 interface UserAccountLayoutProps {
   children: React.ReactNode;
   chatUrl?: string;
+  padding?: string;
 }
 
 const UserAccountLayout: React.FC<UserAccountLayoutProps> = ({
   children,
   chatUrl = "#",
+  padding,
 }) => {
   const navigate = useNavigate();
 
@@ -22,7 +24,7 @@ const UserAccountLayout: React.FC<UserAccountLayoutProps> = ({
         <img src={AuthLogo} alt="auth logo" />
         <div className="avatar">👤</div>
       </Header>
-      <Content>
+      <Content padding={padding}>
         <ContentTop onClick={() => navigate(chatUrl)}>
           <IconWrapper>
             <BackArrowIcon />
@@ -42,6 +44,7 @@ const OrganizationContainer = styled.div`
   align-items: center;
   width: 100%;
   position: relative;
+  background: #f7f7f7;
 `;
 const Header = styled.div`
   position: fixed;
@@ -81,7 +84,7 @@ const Header = styled.div`
     cursor: pointer;
   }
 `;
-const Content = styled.div`
+const Content = styled.div<{ padding?: string }>`
   margin-top: 80px;
   display: flex;
   align-items: flex-start;
@@ -89,7 +92,7 @@ const Content = styled.div`
   justify-content: space-between;
   height: calc(100vh - 80px);
   width: 100%;
-  padding: 25px 120px;
+  padding: ${({ padding }) => padding || "25px 120px"};
   overflow-y: auto;
   @media (max-width: 1024px) {
     padding: 10px 60px;

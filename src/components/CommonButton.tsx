@@ -5,12 +5,12 @@ import styled from "styled-components";
 interface CommonButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  bgColor?: string;
-  color?: string;
+  bgcolor?: string;
+  color?: string ;
   borderRadius?: string;
   padding?: string;
   fontSize?: string;
-  bgHoverColor?: string;
+  bghovercolor?: string;
   width?: string;
   height?: string;
   border?: string;
@@ -19,7 +19,7 @@ interface CommonButtonProps
 const StyledButton = styled(Button)<CommonButtonProps>`
   width: ${({ width }) => width || "100%"};
   height: ${({ height }) => height || "56px"};
-  background: ${({ bgColor }) => bgColor || "#62A8BF"};
+  background: ${({ bgcolor }) => bgcolor || "#62A8BF"};
   color: ${({ color }) => color || "#fff"} !important;
   border-radius: ${({ borderRadius }) => borderRadius || "8px"};
   padding: ${({ padding }) => padding || "10px"};
@@ -29,7 +29,7 @@ const StyledButton = styled(Button)<CommonButtonProps>`
   cursor: pointer;
   transition: background 0.2s;
   &:hover {
-    background: ${({ bgHoverColor }) => bgHoverColor || "#62A8BF"} !important;
+    background: ${({ bghovercolor }) => bghovercolor || "#62A8BF"} !important;
     border: ${({ border }) => border || "none"} !important;
   }
   @media (max-width: 768px) {

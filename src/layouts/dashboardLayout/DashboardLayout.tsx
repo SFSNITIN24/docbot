@@ -1,8 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  MessageSendIcon,
-  UploadFileInChatIcon,
-} from "../../utils/svg";
+import { MessageSendIcon, UploadFileInChatIcon } from "../../utils/svg";
 import {
   Container,
   MainContent,
@@ -20,19 +17,30 @@ import {
 import { AuthLogo } from "../../utils/images";
 import ModalComponent from "../../components/CommonModal";
 import CommonUpgradeModal from "../../components/CommonUpgradeModal";
-import Profile from "../../pages/public/profile";
+import Profile from "../../pages/private/profile";
 import ChangePassword from "../../pages/public/changePassword";
-import TwoFactor from "../../pages/public/twoFactor";
+import TwoFactor from "../../pages/private/twoFactor";
 import DashboardSidebar from "./Sidebar";
 import { Circle } from "../../components/CommonCircle";
 import Header from "./Header";
-import { useLocation } from "react-router-dom";
 import AdminProfile from "../../pages/public/adminProfile";
+import { useAppSelector } from "../../store/hooks";
+import { useLocation } from "react-router-dom";
+import CommonDeleteModal from "../../components/CommonDeleteModal";
 
 const DashboardLayout: React.FC = () => {
- const { search } = useLocation();
+  const UserType = useAppSelector((state) => state.auth.user?.type);
+  const { search } = useLocation();
   const params = new URLSearchParams(search);
-  const type = params.get("type");
+  useEffect(() => {
+    const pathname = location.pathname;
+    const model = params.get("model");
+
+    if (pathname === "/chat" && model === "auto") {
+      setMessages([]);
+    }
+  }, [location.pathname, location.search]);
+
   const [sidebarMinimized, setSidebarMinimized] = useState(false);
   const [openMenuKey, setOpenMenuKey] = useState<string | null>(null);
   const [adPosition, setAdPosition] = useState<"top" | "right">("top");
@@ -45,11 +53,12 @@ const DashboardLayout: React.FC = () => {
   const [messages, setMessages] = useState<
     { type: "user" | "bot"; text: string }[]
   >([]);
-  
+
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
   const [twoFactorModalOpen, setTwoFactorModalOpen] = useState(false);
+  const [deleteChatModal, setDeleteChatModal] = useState(false);
 
   const lastMessageRef = useRef<HTMLDivElement | null>(null);
 
@@ -102,6 +111,7 @@ const DashboardLayout: React.FC = () => {
         openMenuKey={openMenuKey}
         setOpenMenuKey={setOpenMenuKey}
         setUpgradeModalOpen={setUpgradeModalOpen}
+        setDeleteChatModal={setDeleteChatModal}
       />
       <MainSection>
         <Header
@@ -113,7 +123,7 @@ const DashboardLayout: React.FC = () => {
           setAdPosition={setAdPosition}
           showAd={showAd}
           setShowAd={setShowAd}
-          type={type}
+          type={UserType}
         />
         {showAd && adPosition === "top" && (
           <AdBanner>
@@ -201,7 +211,7 @@ const DashboardLayout: React.FC = () => {
             confirmText="Upgrade"
             cicleColor="#62A8BF"
             buttonColor="#62A8BF"
-            bgHoverColor="#62A8BF"
+            bghovercolor="#62A8BF"
             borderRadius="100px"
           />
         </ModalComponent>
@@ -214,7 +224,7 @@ const DashboardLayout: React.FC = () => {
           height={"80vh"}
           overFlow="auto"
         >
-          {type ==="enterprise" ? <AdminProfile /> : <Profile />}
+          {UserType === "enterprise" ? <AdminProfile /> : <Profile />}
         </ModalComponent>
       )}
       {changePasswordModalOpen && (
@@ -233,6 +243,22 @@ const DashboardLayout: React.FC = () => {
           width={"468px"}
         >
           <TwoFactor />
+        </ModalComponent>
+      )}
+      {deleteChatModal && (
+        <ModalComponent
+          openModal={deleteChatModal}
+          setOpenModal={setDeleteChatModal}
+          width={"468px"}
+        >
+          <CommonDeleteModal
+            title="Delete Chat"
+            description="Are you sure you want to DELETE this chat?"
+            onConfirm={() => {
+              setDeleteChatModal(false);
+            }}
+            onCancel={() => setDeleteChatModal(false)}
+          />
         </ModalComponent>
       )}
     </Container>

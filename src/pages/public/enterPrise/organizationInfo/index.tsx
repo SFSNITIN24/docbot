@@ -6,7 +6,8 @@ import CommonInput from "../../../../components/CommonInput";
 import { ArrowLeftIcon } from "../../../../utils/svg";
 import CommonButton from "../../../../components/CommonButton";
 import CommonSelect from "../../../../components/CommonSelect";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate  } from "react-router-dom";
+import { useAppSelector } from "../../../../store/hooks";
 
 type OrganizationFormValues = {
   organizationType: string;
@@ -15,14 +16,12 @@ type OrganizationFormValues = {
 
 const OrganizationInfoPage: React.FC = () => {
   const navigate = useNavigate();
-  const { search } = useLocation();
-  const params = new URLSearchParams(search);
-  const type = params.get("type");
+   const UserType = useAppSelector((state) => state.auth.user?.type);
 
   const onFinish = (values: unknown) => {
     const typedValues = values as OrganizationFormValues;
     console.log("Form values:", typedValues);
-    if (type === "individual") {
+    if (UserType === "individual") {
       navigate("/organization-admin-info?type=individual");
     } else {
       navigate("/two-factor-authentication?type=enterprise");
@@ -31,10 +30,10 @@ const OrganizationInfoPage: React.FC = () => {
 
   return (
     <AuthLayout
-      dashboardUrl="/dashboard"
+      dashboardUrl="/"
       topRightContent={
         <>
-          Already have an account? <a href="/">Sign in</a>
+          Already have an account? <a href="/login">Sign in</a>
         </>
       }
       title="Organization Info"
@@ -71,7 +70,7 @@ const OrganizationInfoPage: React.FC = () => {
         
 
         <Form.Item  style={{ marginBottom: "0px" }}>
-          <CommonButton bgColor="#62A8BF" color="#fff" bgHoverColor="#62A8BF">
+          <CommonButton bgcolor="#62A8BF" color="#fff" bghovercolor="#62A8BF">
             Continue <ArrowLeftIcon />
           </CommonButton>
         </Form.Item>

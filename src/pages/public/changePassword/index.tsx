@@ -87,9 +87,9 @@ const ChnagePasswordPage: React.FC = () => {
         </Form.Item>
         <Form.Item style={{ marginBottom: "0px", marginTop: "20px" }}>
           <CommonButton
-            bgColor="#62A8BF"
+            bgcolor="#62A8BF"
             color="#fff"
-            bgHoverColor="#62A8BF"
+            bghovercolor="#62A8BF"
             borderRadius="100px"
           >
             Update

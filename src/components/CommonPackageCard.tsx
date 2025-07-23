@@ -10,6 +10,11 @@ interface CommonPackageCardProps {
   features: string[];
   recommended?: boolean;
   onSelect?: () => void;
+  activePlan?: boolean;
+  renewAmount?: number | null;
+  renewDate?: string | null;
+  upgrade?: boolean;
+  boxShadow?: string;
 }
 
 const CommonPackageCard: React.FC<CommonPackageCardProps> = ({
@@ -19,44 +24,76 @@ const CommonPackageCard: React.FC<CommonPackageCardProps> = ({
   features,
   recommended = false,
   onSelect,
+  activePlan = false,
+  renewAmount = null,
+  renewDate = null,
+  upgrade = false,
+  boxShadow,
 }) => {
   return (
-    <CardWrapper recommended={recommended}>
+    <CardWrapper recommended={recommended} boxShadow={boxShadow}>
       {recommended && <RecommendedBanner>Recommended</RecommendedBanner>}
-      <Title>{title}</Title>
-      <PriceRow>
-        <Price>${price.toFixed(2)}</Price>
-        <Period>{period}</Period>
-      </PriceRow>
-      <Divider />
-      <FeatureList>
-        {features?.map((feature, idx) => (
-          <FeatureItem key={idx}>
-            <CheckmarkWrapper>
-              <CheckMarkIcon />
-            </CheckmarkWrapper>
-            <FeatureText>{feature}</FeatureText>
-          </FeatureItem>
-        ))}
-      </FeatureList>
-      <ButtonWrapper>
-        <CommonButton
-          width="100%"
-          onClick={onSelect}
-          borderRadius="100px"
-          height="40px"
-        >
-          Select
-        </CommonButton>
-      </ButtonWrapper>
+      <CardContent>
+        <Title>{title}</Title>
+        <PriceRow>
+          <Price>${price.toFixed(2)}</Price>
+          <Period>{period}</Period>
+        </PriceRow>
+        {activePlan && (
+          <CurrentPlan>
+            <CommonButton
+              bgcolor="#fff"
+              bghovercolor="#fff"
+              borderRadius="100px"
+              border="1px solid #A9A9A9"
+              height="32px"
+              color="#8A8A8A"
+            >
+              Your current plan
+            </CommonButton>
+            <CurrentPlanText>
+              Renews for {renewAmount} on {renewDate}
+            </CurrentPlanText>
+          </CurrentPlan>
+        )}
+        <Divider />
+        <FeatureList>
+          {features?.map((feature, idx) => (
+            <FeatureItem key={idx}>
+              <CheckmarkWrapper>
+                <CheckMarkIcon />
+              </CheckmarkWrapper>
+              <FeatureText>{feature}</FeatureText>
+            </FeatureItem>
+          ))}
+        </FeatureList>
+        <ButtonWrapper>
+          <CommonButton
+            width="100%"
+            onClick={onSelect}
+            borderRadius="100px"
+            height="40px"
+            color={activePlan ? "#FB4A49" : "#fff"}
+            bgcolor={activePlan ? "#ffdee6" : "#62A8BF"}
+            bghovercolor={activePlan ? "#ffdee6" : "#62A8BF"}
+            border={activePlan ? "1px solid #FB4A49" : "none"}
+          >
+            {activePlan
+              ? "Cancel subscription"
+              : upgrade
+              ? "Upgrade"
+              : "Select"}
+          </CommonButton>
+        </ButtonWrapper>
+      </CardContent>
     </CardWrapper>
   );
 };
 
 export default CommonPackageCard;
 
-const CardWrapper = styled.div<{ recommended?: boolean }>`
-  box-shadow: 0px 0px 4px 0px #183b560d;
+const CardWrapper = styled.div<{ recommended?: boolean; boxShadow?: string }>`
+  box-shadow: ${({ boxShadow }) => boxShadow ?? "0px 0px 4px 0px #183b560d"};
   background: #fff;
   border-radius: 4px;
   padding: 24px;
@@ -65,11 +102,13 @@ const CardWrapper = styled.div<{ recommended?: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: -webkit-fill-available;
   position: relative;
-
+  align-items: stretch;
   &:hover {
     background: #007bff0d;
   }
+
   @media (max-width: 480px) {
     margin-top: ${({ recommended }) => (recommended ? "30px" : "0px")};
   }
@@ -103,7 +142,21 @@ const PriceRow = styled.div`
   display: flex;
   align-items: center;
 `;
+const CurrentPlan = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+`;
 
+const CurrentPlanText = styled.span`
+  font-family: "Manrope";
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 140%;
+  text-align: center;
+  color: #62a8bf;
+`;
 const Price = styled.span`
   font-family: "Manrope";
   font-weight: 700;
@@ -111,7 +164,6 @@ const Price = styled.span`
   line-height: 120%;
   color: #1c1c1c;
 `;
-
 const Period = styled.span`
   font-family: "Manrope";
   font-weight: 400;
@@ -131,10 +183,10 @@ const FeatureList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
-  margin-bottom: 24px;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  margin-bottom: 24px;
 `;
 
 const FeatureItem = styled.li`
@@ -157,4 +209,9 @@ const FeatureText = styled.span`
 
 const ButtonWrapper = styled.div`
   margin-top: auto;
+`;
+const CardContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Fills available height */
 `;

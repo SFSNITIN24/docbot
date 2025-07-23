@@ -57,8 +57,8 @@ export const BackArrowIcon = () => {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M11.0309 0.468876C11.172 0.609582 11.2513 0.800635 11.2513 0.999876C11.2513 1.19912 11.172 1.39017 11.0309 1.53088L2.56044 9.99988L11.0309 18.4689C11.3242 18.7621 11.3242 19.2375 11.031 19.5308C10.7379 19.8241 10.2624 19.8242 9.96912 19.5311L0.968937 10.5309C0.827874 10.3902 0.748596 10.1991 0.748596 9.99988C0.748596 9.80064 0.827874 9.60958 0.968937 9.46888L9.96894 0.468876C10.1096 0.327813 10.3007 0.248535 10.4999 0.248535C10.6992 0.248535 10.8902 0.327813 11.0309 0.468876V0.468876Z"
         fill="#1C1C1C"
       />
@@ -105,37 +105,37 @@ export const EyeSlashIcon = () => {
       <path
         d="M4.5 4.25L19.5 20.75"
         stroke="#8A8A8A"
-        stroke-width="1.125"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.125"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M14.5215 15.2749C13.8333 15.9053 12.9329 16.2534 11.9996 16.2499C11.2427 16.2498 10.5036 16.0207 9.87935 15.5926C9.25512 15.1646 8.77502 14.5577 8.50216 13.8517C8.2293 13.1458 8.17646 12.3737 8.35058 11.6372C8.5247 10.9006 8.91764 10.2339 9.47773 9.72485"
         stroke="#8A8A8A"
-        stroke-width="1.125"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.125"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M6.9375 6.9314C3.1125 8.86265 1.5 12.5001 1.5 12.5001C1.5 12.5001 4.5 19.2501 12 19.2501C13.7574 19.2645 15.4929 18.8595 17.0625 18.0689"
         stroke="#8A8A8A"
-        stroke-width="1.125"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.125"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M19.556 16.3531C21.5997 14.525 22.4997 12.5 22.4997 12.5C22.4997 12.5 19.4997 5.75002 11.9997 5.75002C11.3495 5.74874 10.7004 5.80205 10.0591 5.9094"
         stroke="#8A8A8A"
-        stroke-width="1.125"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.125"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M12.7031 8.81555C13.5006 8.96665 14.2273 9.37305 14.7735 9.97341C15.3198 10.5738 15.6559 11.3355 15.7313 12.1437"
         stroke="#8A8A8A"
-        stroke-width="1.125"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.125"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -193,8 +193,8 @@ export const DownArrowIcon = () => {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M0.294358 0.323655C0.684882 -0.0668693 1.31805 -0.0668693 1.70857 0.323655L7.00147 5.61655L12.2944 0.323655C12.6849 -0.0668688 13.318 -0.0668688 13.7086 0.323656C14.0991 0.71418 14.0991 1.34734 13.7086 1.73787L7.81464 7.6318C7.36554 8.0809 6.6374 8.08091 6.18829 7.6318L0.294358 1.73787C-0.0961663 1.34734 -0.0961663 0.714179 0.294358 0.323655Z"
         fill="#767676"
       />
@@ -432,11 +432,11 @@ export const ArrowDownIcon = () => {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M0.749995 0.59616C1.06665 0.245941 1.6003 0.245941 1.91696 0.59616L7.41652 6.58297C7.73318 6.93319 8.26682 6.93319 8.58348 6.58297L14.083 0.59616C14.3997 0.245941 14.9333 0.245941 15.25 0.59616C15.5833 0.946379 15.5833 1.5293 15.25 1.87951L9.76673 7.86633C8.78341 8.93366 7.21659 8.93366 6.23327 7.86633L0.749995 1.87951C0.416668 1.5293 0.416668 0.946379 0.749995 0.59616Z"
         fill="black"
-        fill-opacity="0.4"
+        fillOpacity="0.4"
       />
     </svg>
   );

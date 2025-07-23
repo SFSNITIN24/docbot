@@ -1,35 +1,23 @@
-import styled from "styled-components"
-import { Circle } from "./CommonCircle"
-import { DeleteIcon } from "../utils/svg"
-import CommonButton from "./CommonButton"
-import React from "react"
+import styled from "styled-components";
+import CommonButton from "../../../../components/CommonButton";
 
-interface CommonDeleteModalProps {
-  title: string;
-  description: string;
+interface CommonButtonProps {
   onConfirm: () => void;
   onCancel: () => void;
-  confirmText?: string;
-  cancelText?: string;
 }
 
-const CommonDeleteModal: React.FC<CommonDeleteModalProps> = ({
-  title ,
-  description,
+const OrganizationResetPassword: React.FC<CommonButtonProps> = ({
   onConfirm,
   onCancel,
-  confirmText = "Yes",
-  cancelText = "No",
 }) => {
   return (
-    <DeleteWrapper>
-      <IconWrapper>
-        <Circle bg="#FB4A49" width="80px" height="80px">
-          <DeleteIcon />
-        </Circle>
-      </IconWrapper>
-      <Title>{title}</Title>
-      <Description>{description}</Description>
+    <Wrapper>
+      <Title>Resets a user password</Title>
+      <Description>
+        Are you sure you want to reset this user's password? If confirmed, a
+        reset password link will be sent to their email, and the password will
+        be updated accordingly.
+      </Description>
       <ButtonWrapper>
         <CommonButton
           border="1px solid #000000"
@@ -40,25 +28,25 @@ const CommonDeleteModal: React.FC<CommonDeleteModalProps> = ({
           onClick={onCancel}
           height="40px"
         >
-          {cancelText}
+          No
         </CommonButton>
         <CommonButton
-          bgcolor="#FB4A49"
+          bgcolor="#62A8BF"
           color="#fff"
-          bghovercolor="#FB4A49"
+          bghovercolor="#62A8BF"
           borderRadius="10px"
           onClick={onConfirm}
           height="40px"
         >
-          {confirmText}
+          Yes
         </CommonButton>
       </ButtonWrapper>
-    </DeleteWrapper>
-  )
-}
+    </Wrapper>
+  );
+};
 
-export default CommonDeleteModal
-const DeleteWrapper = styled.div`
+export default OrganizationResetPassword;
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -67,7 +55,6 @@ const DeleteWrapper = styled.div`
   gap: 12px;
   width: 100%;
 `;
-const IconWrapper = styled.div``;
 
 const Title = styled.h2`
   font-weight: 600;

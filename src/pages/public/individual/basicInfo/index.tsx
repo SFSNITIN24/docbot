@@ -10,16 +10,15 @@ import { useNavigate} from "react-router-dom";
 import { useAppSelector } from "../../../../store/hooks";
 
 type OrganizationFormValues = {
-  firstName: string;
-  lastName: string;
   userName: string;
-  phone: string;
+  organizationName: string;
+  organizationType: string;
   email: string;
+  phone: string;
   password: string;
-  confirmPassword: string;
 };
 
-const OrganizationAdminInfoPage: React.FC = () => {
+const BasicInfoPage: React.FC = () => {
   const [countryCode, setCountryCode] = React.useState("+1");
   const navigate = useNavigate();
    const UserType = useAppSelector((state) => state.auth.user?.type);
@@ -45,35 +44,49 @@ const OrganizationAdminInfoPage: React.FC = () => {
           Already have an account? <a href="/login">Sign in</a>
         </>
       }
-      title="Organization Admin Info"
-      text="Enter the basic organization admin info"
+      title="Basic Account Info"
+      text="Enter the basic account Info"
     >
       <FormWrapper layout="vertical" onFinish={onFinish}>
-        <Form.Item
-          name="firstName"
-          rules={[{ required: true, message: "Please enter your first name" }]}
-          style={{ marginBottom: "0px" }}
-        >
-          <CommonInput
-            label="First Name"
-            type="text"
-            placeholder="Organization Name"
-          />
-        </Form.Item>
-        <Form.Item
-          name="lastName"
-          rules={[{ required: true, message: "Please enter your last name" }]}
-          style={{ marginBottom: "0px" }}
-        >
-          <CommonInput type="text" placeholder="Last Name" />
-        </Form.Item>
         <Form.Item
           name="userName"
           rules={[{ required: true, message: "Please enter your User Name" }]}
           style={{ marginBottom: "0px" }}
         >
-          <CommonInput type="text" placeholder="Username" />
+          <CommonInput
+            type="text"
+            placeholder="Username"
+            label="Username"
+            inputBorder="1px solid #D9D9D9"
+          />
         </Form.Item>
+        <Form.Item
+          name="organizationName"
+          rules={[
+            { required: true, message: "Please enter your organization name" },
+          ]}
+          style={{ marginBottom: "0px" }}
+        >
+          <CommonInput type="text" placeholder="Organization/AffIiation Name" />
+        </Form.Item>
+        <Form.Item
+          name="organizationType"
+          rules={[
+            { required: true, message: "Please select organization type" },
+          ]}
+          style={{ marginBottom: "0px" }}
+        >
+          <CommonSelect
+            placeholder="Organization Type"
+            options={[
+              { label: "Private", value: "private" },
+              { label: "Public", value: "public" },
+              { label: "Non-Profit", value: "nonprofit" },
+            ]}
+            border="1px solid #D9D9D9"
+          />
+        </Form.Item>
+
         <Form.Item
           name="email"
           rules={[{ required: true, message: "Please enter your email" }]}
@@ -106,9 +119,9 @@ const OrganizationAdminInfoPage: React.FC = () => {
               ]}
               value={countryCode}
               onChange={(val) => setCountryCode(val)}
+              border="1px solid #D9D9D9"
             />
             <CommonInput
-              name="phone"
               type="tel"
               placeholder="Enter Phone Number"
               style={{ flex: 1 }}
@@ -127,31 +140,7 @@ const OrganizationAdminInfoPage: React.FC = () => {
             eyeOffIcon={<EyeSlashIcon />}
           />
         </Form.Item>
-        <Form.Item
-          name="confirmPassword"
-          dependencies={["password"]}
-          rules={[
-            { required: true, message: "Please enter your confirm password" },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue("password") === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error("Passwords do not match!"));
-              },
-            }),
-          ]}
-          style={{ marginBottom: "0px" }}
-        >
-          <CommonInput
-            type="password"
-            placeholder="Confirmation Password"
-            eyeIcon={<EyeSlashIcon />}
-            eyeOffIcon={<EyeSlashIcon />}
-          />
-        </Form.Item>
-
-        <Form.Item  style={{ marginBottom: "0px" }}>
+        <Form.Item style={{ marginBottom: "0px" }}>
           <CommonButton bgcolor="#62A8BF" color="#fff" bghovercolor="#62A8BF">
             Continue <ArrowLeftIcon />
           </CommonButton>
@@ -161,7 +150,7 @@ const OrganizationAdminInfoPage: React.FC = () => {
   );
 };
 
-export default OrganizationAdminInfoPage;
+export default BasicInfoPage;
 
 const FormWrapper = styled(Form)`
   width: 100%;

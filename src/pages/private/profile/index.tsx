@@ -9,14 +9,22 @@ import { Circle } from "../../../components/CommonCircle";
 import { EditIcon } from "../../../utils/svg";
 
 type ProfileFormValues = {
-  firstName: string;
+  firstName?: string;
   lastName?: string;
+  organizationName?: string;
+  organizationType?: string;
   email?: string;
   phone?: string;
   promotionalDeals?: boolean;
 };
 
-const AdminProfile = () => {
+const organizationTypeOptions = [
+  { label: "Private", value: "private" },
+  { label: "Public", value: "public" },
+  { label: "Non-Profit", value: "nonprofit" },
+];
+
+const MyProfile = () => {
   const [form] = Form.useForm();
   const [countryCode, setCountryCode] = useState("+1");
   const [profileImg, setProfileImg] = useState<string | null>(null);
@@ -68,6 +76,7 @@ const AdminProfile = () => {
         onFinish={onFinish}
         initialValues={{
           firstName: "Asr01",
+          lastName: "",
           organizationName: "",
           organizationType: undefined,
           email: "",
@@ -81,18 +90,34 @@ const AdminProfile = () => {
           style={{ marginBottom: "0px" }}
         >
           <CommonInput
-            placeholder="Name"
-            label="firstName"
+            placeholder="First Name"
+            label="First Name"
             inputBorder="1px solid #D9D9D9"
           />
         </Form.Item>
-        <Form.Item name="lastName" style={{ marginBottom: "0px" }}>
+        <Form.Item
+          name="lastName"
+          rules={[{ required: true, message: "Please enter your last name" }]}
+          style={{ marginBottom: "0px" }}
+        >
           <CommonInput
             placeholder="Last Name"
             inputBorder="1px solid #D9D9D9"
           />
         </Form.Item>
-
+        <Form.Item name="organizationName" style={{ marginBottom: "0px" }}>
+          <CommonInput
+            placeholder="Organization/Affiliation Name"
+            inputBorder="1px solid #D9D9D9"
+          />
+        </Form.Item>
+        <Form.Item name="organizationType" style={{ marginBottom: "0px" }}>
+          <CommonSelect
+            placeholder="Organization Type"
+            options={organizationTypeOptions}
+            border="1px solid #D9D9D9"
+          />
+        </Form.Item>
         <Form.Item
           name="email"
           rules={[
@@ -157,7 +182,7 @@ const AdminProfile = () => {
   );
 };
 
-export default AdminProfile;
+export default MyProfile;
 
 const ProfilelWrapper = styled.div`
   display: flex;

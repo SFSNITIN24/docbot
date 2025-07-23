@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from "react";
+import React, { useRef, useState, useCallback} from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowDownIcon,
@@ -33,6 +33,8 @@ import {
   IconWrapper,
   CommonMotionDropdown,
 } from "../../components/CommonStyle";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { logout } from "../../store/slices/authSlice";
 
 const featureOptions = [
   { value: "DocBot", label: "DocBot" },
@@ -60,7 +62,7 @@ interface HeaderProps {
   setAdPosition: (position: "top" | "right") => void;
   showAd: boolean;
   setShowAd: (show: boolean) => void;
-  type: string | null;
+  type: string | null | unknown;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -74,13 +76,14 @@ const Header: React.FC<HeaderProps> = ({
   setShowAd,
   type,
 }) => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [selectedFeature, setSelectedFeature] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const avatarDropdownRef = useRef<HTMLDivElement>(null);
-  const login = false;
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   const handleClick = useCallback(
     (path: string) => () => navigate(path),
@@ -88,7 +91,9 @@ const Header: React.FC<HeaderProps> = ({
   );
 
   const handleLogout = () => {
-    console.log("Logged out!");
+    localStorage.clear();
+    sessionStorage.clear();
+    dispatch(logout());
   };
 
   const AvatarDropdown = [
@@ -100,18 +105,18 @@ const Header: React.FC<HeaderProps> = ({
         setAvatarDropdownOpen(false);
       },
     },
-   ...(type === "enterprise"
-    ? [
-        {
-          icon: <OrganizationSettingIcon />,
-          label: "Organization Settings",
-          onClick: () => {
-             navigate("/organization-setting");
-            setAvatarDropdownOpen(false);
+    ...(type === "enterprise"
+      ? [
+          {
+            icon: <OrganizationSettingIcon />,
+            label: "Organization Settings",
+            onClick: () => {
+              navigate("/organization-setting");
+              setAvatarDropdownOpen(false);
+            },
           },
-        },
-      ]
-    : []),
+        ]
+      : []),
     {
       icon: <DropDownLockIcon />,
       label: "Change password",
@@ -132,7 +137,7 @@ const Header: React.FC<HeaderProps> = ({
       icon: <DropDownCrownIcon />,
       label: "Manage subscription",
       onClick: () => {
-        navigate("/subscription");
+        navigate("/manage-subscription");
         setAvatarDropdownOpen(false);
       },
     },
@@ -182,9 +187,7 @@ const Header: React.FC<HeaderProps> = ({
         </IconWrapper>
       </MobileMenuIcon>
       <CustomDropdown ref={dropdownRef}>
-        <CustomDropdownTrigger
-          onClick={() => setDropdownOpen((open) => !open)}
-        >
+        <CustomDropdownTrigger onClick={() => setDropdownOpen((open) => !open)}>
           <span>{selectedFeature || "The Current Feature"}</span>
           <ArrowDownIcon />
         </CustomDropdownTrigger>
@@ -193,9 +196,7 @@ const Header: React.FC<HeaderProps> = ({
             {featureOptions?.map((option) => (
               <CustomDropdownOption
                 key={option.value}
-                className={
-                  selectedFeature === option.value ? "selected" : ""
-                }
+                className={selectedFeature === option.value ? "selected" : ""}
                 onClick={() => {
                   setSelectedFeature(option.value);
                   setDropdownOpen(false);
@@ -212,7 +213,7 @@ const Header: React.FC<HeaderProps> = ({
           </CustomDropdownMenu>
         </CommonMotionDropdown>
       </CustomDropdown>
-      {login ? (
+      {isAuthenticated ? (
         <>
           <PremiumButton>+ Premium</PremiumButton>
 
@@ -237,10 +238,7 @@ const Header: React.FC<HeaderProps> = ({
               >
                 👤
               </UserAvatar>
-              <CommonMotionDropdown
-                open={avatarDropdownOpen}
-                className="open"
-              >
+              <CommonMotionDropdown open={avatarDropdownOpen} className="open">
                 <DropDownWrapper>
                   {AvatarDropdown?.map((item) => (
                     <React.Fragment key={item.label}>
@@ -268,21 +266,21 @@ const Header: React.FC<HeaderProps> = ({
         <ButtonWrapper>
           <CommonButton
             border="1px solid #000000"
-            bgColor="#fff"
-            bgHoverColor="#fff"
+            bgcolor="#fff"
+            bghovercolor="#fff"
             borderRadius="100px"
             color="#000"
             height="32px"
             fontSize="14px"
             width="80px"
-            onClick={handleClick("/")}
+            onClick={handleClick("/login")}
           >
             Log in
           </CommonButton>
           <CommonButton
-            bgColor="#62A8BF"
+            bgcolor="#62A8BF"
             border="none"
-            bgHoverColor="#62A8BF"
+            bghovercolor="#62A8BF"
             borderRadius="100px"
             height="32px"
             fontSize="14px"

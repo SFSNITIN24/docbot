@@ -156,6 +156,9 @@ export const NavText = styled.span<{ minimized: boolean }>`
 `;
 export const ChatNavText = styled.span<{ minimized: boolean }>`
   display: ${({ minimized }) => (minimized ? "none" : "inline")};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const ChatHistory = styled.div<{ minimized: boolean }>`
