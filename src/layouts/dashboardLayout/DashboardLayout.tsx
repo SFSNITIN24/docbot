@@ -188,6 +188,7 @@ const DashboardLayout: React.FC = () => {
             onConfirm={() => {
               if (deleteChatId !== null) {
                 dispatch(deleteChat(deleteChatId));
+                navigate("/chat?model=auto");
               }
               setDeleteChatModal(false);
             }}

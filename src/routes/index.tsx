@@ -23,7 +23,6 @@ import SubscriptionPage from "../pages/public/auth/subscription";
 import DashboardLayout from "../layouts/dashboardLayout/DashboardLayout";
 import OrganizationSetting from "../pages/private/organizationSetting";
 import ManageSubscription from "../pages/private/manageSubscription";
-import DashBoardPage from "../pages/public/dashboard";
 
 const PrivateRoute = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
   return isAuthenticated ? <Outlet /> : <Navigate to="/dashboard" replace />;
@@ -42,7 +41,7 @@ const Routing = () => {
         {/* Public Routes */}
         <Route element={<PublicRoute isAuthenticated={isAuthenticated} />}>
           <Route path="/" element={<Navigate to="/dashboard" />} />
-          <Route path="/dashboard" element={<DashBoardPage />} />
+          <Route path="/dashboard" element={<DashboardLayout />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/otp" element={<VerificationPage />} />
           <Route path="/forgot" element={<ForgotPasswordPage />} />

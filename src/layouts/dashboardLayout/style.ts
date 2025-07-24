@@ -240,8 +240,6 @@ export const PremiumButton = styled.button`
   font-family: "Manrope";
   font-weight: 500;
   font-size: 14px;
-  line-height: 150%;
-  margin-right: 16px;
   cursor: pointer;
   display: flex;
   gap:10px;
@@ -256,7 +254,6 @@ export const TokensLeft = styled.div`
   font-family: "Manrope";
   font-weight: 500;
   font-size: 14px;
-  line-height: 150%;
 `;
 
 export const UserAvatar = styled.div`

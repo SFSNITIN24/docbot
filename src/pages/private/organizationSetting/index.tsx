@@ -188,9 +188,15 @@ const OrganizationSetting = () => {
                 );
               }
               if (type === "page") {
+                const isActive = currentPage === page;
                 return (
                   <Button
-                    type={currentPage === page ? "primary" : "default"}
+                    style={{
+                      background: isActive ? "#62A8BF" : "transparent",
+                      color: isActive ? "#fff" : "#62A8BF",
+                      borderColor: isActive ? "#62A8BF" : "none",
+                      border: "none",
+                    }}
                     onClick={() => handlePageChange(page)}
                   >
                     {page}
@@ -254,7 +260,6 @@ const TopBar = styled.div`
   align-items: center;
   width: 100%;
   min-height: 60px;
-  background-color: #fff;
   @media (max-width: 1024px) {
     flex-wrap: wrap;
     gap: 12px;
@@ -327,8 +332,8 @@ const TopBar = styled.div`
 const ContentWrapper = styled.div``;
 const StyledTable = styled(Table)`
   margin-top: 24px;
+  background:"none"
   .ant-table-thead > tr > th {
-    background-color: #fff;
     font-weight: 600;
     font-family: "Manrope";
     font-size: 14px;
@@ -339,6 +344,7 @@ const StyledTable = styled(Table)`
     font-size: 16px;
     line-height: 150%;
     font-weight: 400;
+    background: #f7f7f7;
   }
   .ant-table-tbody > tr > td:first-child,
   .ant-table-tbody > tr > td:nth-child(2) {

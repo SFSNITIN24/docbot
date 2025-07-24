@@ -34,7 +34,7 @@ const LoginPage: React.FC = () => {
       name: "Nitin Kumar",
       email: typedValues.username,
       remember: typedValues.remember,
-      type: "individual",
+      type: "enterprise",
     };
 
     const token = "fake-jwt-token-123456789";
