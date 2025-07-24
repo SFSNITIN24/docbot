@@ -30,11 +30,7 @@ const PrivateRoute = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
 };
 
 const PublicRoute = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
-  return isAuthenticated ? (
-    <Navigate to="/chat" replace />
-  ) : (
-    <Outlet />
-  );
+  return isAuthenticated ? <Navigate to="/chat" replace /> : <Outlet />;
 };
 
 const Routing = () => {
@@ -69,6 +65,7 @@ const Routing = () => {
         <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
           <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
             <Route path="/chat" element={<DashboardLayout />} />
+            <Route path="/chat/c/:id" element={<DashboardLayout />} />
             <Route
               path="/organization-setting"
               element={<OrganizationSetting />}

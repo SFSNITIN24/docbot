@@ -1,85 +1,61 @@
 import React, { useState, useRef, useEffect } from "react";
-import { MessageSendIcon, UploadFileInChatIcon } from "../../utils/svg";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   Container,
-  MainContent,
   MainSection,
-  MessageInput,
-  MessageInputWrapper,
   Footer,
-  RightAdContainer,
-  AdBanner,
-  MainContentWrapper,
-  BotImage,
-  HelpText,
-  ChatCard,
+  OutletContainer,
+  LeftAd,
+  Center,
+  TopAd,
+  Chat,
 } from "./style";
-import { AuthLogo } from "../../utils/images";
-import ModalComponent from "../../components/CommonModal";
-import CommonUpgradeModal from "../../components/CommonUpgradeModal";
+import { deleteChat, setActiveChat } from "../../store/slices/chatSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import AdminProfile from "../../pages/public/adminProfile";
 import Profile from "../../pages/private/profile";
 import ChangePassword from "../../pages/public/changePassword";
 import TwoFactor from "../../pages/private/twoFactor";
-import DashboardSidebar from "./Sidebar";
-import { Circle } from "../../components/CommonCircle";
 import Header from "./Header";
-import AdminProfile from "../../pages/public/adminProfile";
-import { useAppSelector } from "../../store/hooks";
-import { useLocation } from "react-router-dom";
+import DashboardSidebar from "./Sidebar";
+import ModalComponent from "../../components/CommonModal";
+import CommonUpgradeModal from "../../components/CommonUpgradeModal";
 import CommonDeleteModal from "../../components/CommonDeleteModal";
+import ChatPage from "../../pages/private/chat";
 
 const DashboardLayout: React.FC = () => {
-  const UserType = useAppSelector((state) => state.auth.user?.type);
-  const { search } = useLocation();
-  const params = new URLSearchParams(search);
-  useEffect(() => {
-    const pathname = location.pathname;
-    const model = params.get("model");
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const hasShownToastRef = useRef(false);
 
-    if (pathname === "/chat" && model === "auto") {
-      setMessages([]);
-    }
-  }, [location.pathname, location.search]);
-
+  const { user: loggedUser } = useAppSelector((state) => state.auth);
+  const userType = loggedUser?.type;
+  const { chats } = useAppSelector((state) => state.chat);
   const [sidebarMinimized, setSidebarMinimized] = useState(false);
   const [openMenuKey, setOpenMenuKey] = useState<string | null>(null);
-  const [adPosition, setAdPosition] = useState<"top" | "right">("top");
-  const [showAd, setShowAd] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" &&
       window.matchMedia("(max-width: 768px)").matches
   );
-  const [messages, setMessages] = useState<
-    { type: "user" | "bot"; text: string }[]
-  >([]);
-
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
   const [twoFactorModalOpen, setTwoFactorModalOpen] = useState(false);
   const [deleteChatModal, setDeleteChatModal] = useState(false);
+  const [deleteChatId, setDeleteChatId] = useState<string | null>("");
 
-  const lastMessageRef = useRef<HTMLDivElement | null>(null);
+  const params = new URLSearchParams(location.search);
+  const model = params.get("model");
+  const pathname = location.pathname;
 
   useEffect(() => {
-    if (lastMessageRef.current) {
-      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+    if (pathname === "/chat" && (model === "auto" || model === null)) {
+      navigate(`/chat?model=auto`);
     }
-  }, [messages]);
-
-  const handleSendMessage = (text: string) => {
-    if (!text.trim()) return;
-
-    setMessages((prev) => [...prev, { type: "user", text }]);
-
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { type: "bot", text: "This is a response." },
-      ]);
-    }, 300);
-  };
+  }, [model, pathname]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 768px)");
@@ -93,6 +69,24 @@ const DashboardLayout: React.FC = () => {
       setSidebarMinimized(false);
     }
   }, [isMobile, sidebarMinimized]);
+
+  const pathnameParts = pathname.split("/");
+  const isChatDetailPath =
+    pathnameParts[1] === "chat" && pathnameParts[2] === "c";
+  const urlChatId = pathnameParts[3];
+
+  useEffect(() => {
+    if (isChatDetailPath && urlChatId) {
+      const chatExists = chats.some((chat) => chat.id === urlChatId);
+
+      if (!chatExists && !hasShownToastRef.current) {
+        toast.warning("Unable to load this conversation.");
+        hasShownToastRef.current = true;
+        dispatch(setActiveChat(null));
+        navigate("/chat?model=auto");
+      }
+    }
+  }, [pathname, chats, navigate]);
 
   return (
     <Container>
@@ -112,6 +106,7 @@ const DashboardLayout: React.FC = () => {
         setOpenMenuKey={setOpenMenuKey}
         setUpgradeModalOpen={setUpgradeModalOpen}
         setDeleteChatModal={setDeleteChatModal}
+        setDeleteChatId={setDeleteChatId}
       />
       <MainSection>
         <Header
@@ -119,82 +114,18 @@ const DashboardLayout: React.FC = () => {
           setProfileModalOpen={setProfileModalOpen}
           setChangePasswordModalOpen={setChangePasswordModalOpen}
           setTwoFactorModalOpen={setTwoFactorModalOpen}
-          adPosition={adPosition}
-          setAdPosition={setAdPosition}
-          showAd={showAd}
-          setShowAd={setShowAd}
-          type={UserType}
+          type={userType}
         />
-        {showAd && adPosition === "top" && (
-          <AdBanner>
-            <div>Ad Space (Top)</div>
-          </AdBanner>
-        )}
-        <MainContentWrapper showAd={showAd}>
-          <MainContent>
-            <ChatCard>
-              {messages?.length === 0 ? (
-                <>
-                  <BotImage src={AuthLogo} alt="Bot" />
-                  <HelpText>What can I help with ?</HelpText>
-                </>
-              ) : (
-                messages?.map((msg, i) => (
-                  <div
-                    key={i}
-                    className={
-                      msg.type === "user" ? "user-message" : "bot-message"
-                    }
-                    style={{ margin: "8px 0" }}
-                    ref={i === messages.length - 1 ? lastMessageRef : null}
-                  >
-                    <div className="message-text">{msg.text}</div>
-                  </div>
-                ))
-              )}
-
-              <MessageInputWrapper
-                style={{
-                  position: messages.length > 0 ? "sticky" : "static",
-                  bottom: messages.length > 0 ? 0 : undefined,
-                  zIndex: 10,
-                  padding: "16px",
-                  marginTop: messages.length === 0 ? "16px" : 0,
-                }}
-              >
-                <UploadFileInChatIcon />
-                <MessageInput
-                  placeholder="Message DocBot AI Code"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleSendMessage(e.currentTarget.value);
-                      e.currentTarget.value = "";
-                    }
-                  }}
-                />
-                <Circle
-                  bg="#62A8BF"
-                  width="24px"
-                  height="24px"
-                  onClick={() => {
-                    const input = document.querySelector(
-                      "input[placeholder='Message DocBot AI Code']"
-                    ) as HTMLInputElement;
-                    handleSendMessage(input.value);
-                    input.value = "";
-                  }}
-                >
-                  <MessageSendIcon />
-                </Circle>
-              </MessageInputWrapper>
-            </ChatCard>
-          </MainContent>
-          {showAd && adPosition === "right" && (
-            <RightAdContainer>
-              <div>Ad Space (Right)</div>
-            </RightAdContainer>
-          )}
-        </MainContentWrapper>
+        <OutletContainer>
+          <LeftAd>left add</LeftAd>
+          <Center>
+            <TopAd>Top content</TopAd>
+            <Chat>
+              <ChatPage />
+            </Chat>
+          </Center>
+          <LeftAd>right add</LeftAd>
+        </OutletContainer>
         <Footer>
           DocBot A1 Coder can make mistakes. Check important info.
         </Footer>
@@ -224,7 +155,7 @@ const DashboardLayout: React.FC = () => {
           height={"80vh"}
           overFlow="auto"
         >
-          {UserType === "enterprise" ? <AdminProfile /> : <Profile />}
+          {userType === "enterprise" ? <AdminProfile /> : <Profile />}
         </ModalComponent>
       )}
       {changePasswordModalOpen && (
@@ -255,6 +186,9 @@ const DashboardLayout: React.FC = () => {
             title="Delete Chat"
             description="Are you sure you want to DELETE this chat?"
             onConfirm={() => {
+              if (deleteChatId !== null) {
+                dispatch(deleteChat(deleteChatId));
+              }
               setDeleteChatModal(false);
             }}
             onCancel={() => setDeleteChatModal(false)}

@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 import {
   AIIcon,
   ChatThreeDotIcon,
@@ -34,49 +35,8 @@ import {
   UpgradePlan,
 } from "./style";
 
-const getNavItems = (navigate: ReturnType<typeof useNavigate>) => [
-  {
-    icon: <NewChatPencilIcon />,
-    label: "New chat",
-    onClick: () => navigate("/chat?model=auto"),
-  },
-  { icon: <SearchIcon />, label: "Search chats" },
-  { icon: <SidebarFeaturesIcon />, label: "Features" },
-];
-
-const aiItems = [
-  {
-    icon: (
-      <Circle bg="#E7E7E7" width="20px" height="20px">
-        <AIIcon />
-      </Circle>
-    ),
-    label: "DocBot",
-  },
-  {
-    icon: (
-      <Circle bg="#E7E7E7" width="20px" height="20px">
-        <AIIcon />
-      </Circle>
-    ),
-    label: "Other Feature",
-  },
-];
-
-const chatHistoryGroups = [
-  {
-    label: "Today",
-    items: [
-      { label: "Suggest Monthly Contribusasasasasasasasasasa" },
-      { label: "What Medic We app..." },
-      { label: "Other Chat name" },
-    ],
-  },
-  {
-    label: "Yesterday",
-    items: [{ label: "Other Chat name" }],
-  },
-];
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { renameChat, setActiveChat } from "../../store/slices/chatSlice";
 
 interface SidebarProps {
   sidebarMinimized: boolean;
@@ -88,6 +48,7 @@ interface SidebarProps {
   setOpenMenuKey: (value: React.SetStateAction<string | null>) => void;
   setUpgradeModalOpen: (value: React.SetStateAction<boolean>) => void;
   setDeleteChatModal: (value: React.SetStateAction<boolean>) => void;
+  setDeleteChatId: (value: React.SetStateAction<string | null>) => void;
 }
 
 const DashboardSidebar: React.FC<SidebarProps> = ({
@@ -99,26 +60,73 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
   openMenuKey,
   setOpenMenuKey,
   setUpgradeModalOpen,
-  setDeleteChatModal
+  setDeleteChatModal,
+  setDeleteChatId,
 }) => {
   const navigate = useNavigate();
-  const navItems = useMemo(() => getNavItems(navigate), [navigate]);
-
+  const dispatch = useAppDispatch();
+  const { chats } = useAppSelector((state) => state.chat);
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editedLabel, setEditedLabel] = useState<string>("");
 
-  const handleRenameSubmit = useCallback(
-    async (menuKey: string, newLabel: string) => {
-      try {
-        console.log("Renaming:", menuKey, "=>", newLabel);
-        setEditingKey(null);
-        // await API call here
-      } catch (error) {
-        console.error("Rename failed:", error);
-        alert("Rename failed.");
-      }
+  const navItems = useMemo(
+    () => [
+      {
+        icon: <NewChatPencilIcon />,
+        label: "New chat",
+        onClick: () => {
+          dispatch(setActiveChat(null));
+          navigate("/chat?model=auto");
+        },
+      },
+      { icon: <SearchIcon />, label: "Search chats" },
+      { icon: <SidebarFeaturesIcon />, label: "Features" },
+    ],
+    [dispatch, navigate]
+  );
+
+  const aiItems = [
+    {
+      icon: (
+        <Circle bg="#E7E7E7" width="20px" height="20px">
+          <AIIcon />
+        </Circle>
+      ),
+      label: "DocBot",
     },
-    []
+    {
+      icon: (
+        <Circle bg="#E7E7E7" width="20px" height="20px">
+          <AIIcon />
+        </Circle>
+      ),
+      label: "Other Feature",
+    },
+  ];
+
+  const groupedChats = useMemo(() => {
+    const groups: Record<string, typeof chats> = {};
+
+    chats.forEach((chat) => {
+      const dayLabel = dayjs(chat.createdAt).isSame(dayjs(), "day")
+        ? "Today"
+        : dayjs(chat.createdAt).isSame(dayjs().subtract(1, "day"), "day")
+        ? "Yesterday"
+        : dayjs(chat.createdAt).format("DD MMM YYYY");
+
+      if (!groups[dayLabel]) groups[dayLabel] = [];
+      groups[dayLabel].push(chat);
+    });
+
+    return groups;
+  }, [chats]);
+
+  const handleRenameSubmit = useCallback(
+    (id: string, newTitle: string) => {
+      dispatch(renameChat({ id, title: newTitle }));
+      setEditingKey(null);
+    },
+    [dispatch]
   );
 
   return (
@@ -130,10 +138,7 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
         width: isMobile ? 260 : sidebarMinimized ? 60 : 260,
       }}
       initial={false}
-      transition={{
-        duration: 0.34,
-        ease: "easeInOut",
-      }}
+      transition={{ duration: 0.34, ease: "easeInOut" }}
     >
       <SidebarTop>
         {!sidebarMinimized && (
@@ -178,17 +183,17 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
         </AI>
         {!sidebarMinimized && (
           <ChatHistory minimized={sidebarMinimized}>
-            {chatHistoryGroups?.map((group) => (
-              <React.Fragment key={group.label}>
+            {Object.entries(groupedChats)?.map(([label, items]) => (
+              <React.Fragment key={label}>
                 <SectionLabel minimized={sidebarMinimized}>
-                  {group.label}
+                  {label}
                 </SectionLabel>
-                {group?.items?.map((item, idx) => {
-                  const menuKey = `${group.label}-${idx}`;
+                {items?.map((item) => {
+                  const menuKey = item.id;
                   const isEditing = editingKey === menuKey;
                   return (
                     <ChatNavItem
-                      key={item.label}
+                      key={item.id}
                       minimized={sidebarMinimized}
                       style={{ position: "relative" }}
                       onMouseLeave={() => setOpenMenuKey(null)}
@@ -213,8 +218,14 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
                           }}
                         />
                       ) : (
-                        <ChatNavText minimized={sidebarMinimized}>
-                          {item.label}
+                        <ChatNavText
+                          minimized={sidebarMinimized}
+                          onClick={() => {
+                            dispatch(setActiveChat(item.id));
+                            navigate(`/chat/c/${item.id}`);
+                          }}
+                        >
+                          {item.title}
                         </ChatNavText>
                       )}
 
@@ -237,7 +248,7 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
                           <DropdownItem
                             onClick={() => {
                               setEditingKey(menuKey);
-                              setEditedLabel(item.label);
+                              setEditedLabel(item.title);
                               setOpenMenuKey(null);
                             }}
                           >
@@ -246,6 +257,7 @@ const DashboardSidebar: React.FC<SidebarProps> = ({
                           <DropdownItemDelete
                             onClick={() => {
                               setDeleteChatModal(true);
+                              setDeleteChatId(item.id);
                             }}
                           >
                             Delete

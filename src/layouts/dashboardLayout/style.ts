@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import styled, { css } from "styled-components";
 
@@ -124,7 +125,10 @@ export const NavItem = styled.li<{ minimized: boolean }>`
     border-radius: 9px;
   }
 `;
-export const ChatNavItem = styled.li<{ minimized: boolean }>`
+export const ChatNavItem = styled.li<{
+  minimized: boolean;
+  urlChatId?: string;
+}>`
   padding: 10px;
   font-family: "Manrope";
   font-weight: 400;
@@ -216,6 +220,7 @@ export const MainSection = styled.div`
   padding: 12px 30px;
   height: 100%;
   min-height: 0;
+  gap: 32px;
 `;
 
 export const TopBar = styled.div`
@@ -238,6 +243,9 @@ export const PremiumButton = styled.button`
   line-height: 150%;
   margin-right: 16px;
   cursor: pointer;
+  display: flex;
+  gap:10px;
+  align-items:center;
 `;
 
 export const TokensLeft = styled.div`
@@ -249,117 +257,21 @@ export const TokensLeft = styled.div`
   font-weight: 500;
   font-size: 14px;
   line-height: 150%;
-
-  margin-right: 12px;
 `;
 
 export const UserAvatar = styled.div`
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: #eee;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  color: #888;
-`;
-
-export const MainContent = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-
-  .user-message {
-    display: flex;
-    justify-content: flex-end;
+  cursor: pointer;
+  border: 1px solid #e7e7e7;
+  img {
     width: 100%;
-    .message-text {
-      background-color: #e7e7e7;
-    }
-  }
-  .bot-message {
-    display: flex;
-    justify-content: flex-start;
-    width: 100%;
-    .message-text {
-      background-color: transparent;
-    }
-  }
-  .message-text {
-    border-radius: 6px 0px 6px 6px;
-    padding: 10px 16px;
-    font-family: "Manrope";
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 150%;
-    color: #1c1c1c;
-    white-space: pre-wrap;
-    word-break: break-word;
-    max-width: 70%;
-    box-sizing: border-box;
-  }
-`;
-
-export const ChatCard = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative !important ;
-  height: 100%;
-  overflow-y: auto;
-  justify-content: center !important;
-`;
-
-export const BotImage = styled.img`
-  width: 120px;
-  height: 120px;
-  margin-bottom: 38px;
-`;
-
-export const HelpText = styled.div`
-  font-family: "Manrope";
-  font-weight: 700;
-  font-size: 20px;
-  color: #242424;
-  line-height: 120%;
-  margin-bottom: 16px;
-`;
-
-export const MessageInputWrapper = styled.div`
-  min-width: 100%;
-  max-width: 600px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #f4f4f4cc;
-  border-radius: 12px;
-  padding: 16px 12px;
-  @media (max-width: 768px) {
-    min-width: 400px;
-    max-width: 400px;
-  }
-  @media (max-width: 480px) {
-    min-width: 100%;
-    width: 100%;
-    max-width: 100%;
-  }
-`;
-
-export const MessageInput = styled.input`
-  flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
-  font-family: "Manrope";
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 140%;
-  &::placeholder {
-    color: #a9a9a9;
+    height: 100%;
+    border-radius: 50%;
   }
 `;
 
@@ -521,41 +433,6 @@ export const Footer = styled.p`
   text-align: center;
 `;
 
-export const RightAdContainer = styled.div`
-  width: 177px;
-  min-width: 177px;
-  background: #f5f5f5;
-  margin-left: 24px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #b0b0b0;
-  font-size: 2rem;
-  height: 100%;
-  overflow: hidden;
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
-export const AdBanner = styled.div`
-  width: 100%;
-  min-height: 150px;
-  background: #f5f5f5;
-  margin-bottom: 24px;
-  margin-top: 32px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #b0b0b0;
-  font-size: 2rem;
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
 export const MobileMenuIcon = styled.div`
   display: none;
   @media (max-width: 768px) {
@@ -575,28 +452,11 @@ export const AvatarWrapper = styled.div`
   gap: 12px;
 `;
 
-export const AdsWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
 
 export const ButtonWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
-`;
-export const MainContentWrapper = styled.div<{ showAd: boolean }>`
-  flex: 1 1 auto;
-  min-height: 0;
-  scroll-behavior: smooth;
-  position: relative;
-  overflow-x: hidden;
-  display: flex;
-  margin-top: ${({ showAd }) => (showAd ? "24px" : "0px")};
 `;
 
 export const DropDownWrapper = styled.div`
@@ -633,4 +493,53 @@ export const AvatarDropdownitemStyle = styled.div<{ label?: string }>`
     background: #62a8bf;
     color: ${({ label }) => (label === "Logout" ? "#fb4a49" : "#ffffff")};
   }
+`;
+
+export const OutletContainer = styled.div`
+  width: 100%;
+  height: calc(100vh - 160px);
+  display: flex;
+  gap: 17px;
+
+  @media (max-width: 1024px) {
+    gap: 0;
+  }
+`;
+
+export const LeftAd = styled.div`
+  min-width: 177px;
+  max-width: 177px;
+  border-radius: 12px;
+  background: #f5f5f5;
+   display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+`;
+
+export const Center = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  overflow: hidden;
+`;
+
+export const TopAd = styled.div`
+  width: 100%;
+  height: 177px;
+  border-radius: 12px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const Chat = styled.div`
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
 `;

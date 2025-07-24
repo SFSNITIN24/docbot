@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback} from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowDownIcon,
@@ -10,6 +10,7 @@ import {
   DropDownCrownIcon,
   DropDownAvatarIcon,
   OrganizationSettingIcon,
+  PremiumPackIcon,
 } from "../../utils/svg";
 import {
   TopBar,
@@ -22,7 +23,6 @@ import {
   PremiumButton,
   TokensLeft,
   MobileMenuIcon,
-  AdsWrapper,
   AvatarWrapper,
   ButtonWrapper,
   DropDownWrapper,
@@ -35,6 +35,7 @@ import {
 } from "../../components/CommonStyle";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { logout } from "../../store/slices/authSlice";
+import { AuthLogo } from "../../utils/images";
 
 const featureOptions = [
   { value: "DocBot", label: "DocBot" },
@@ -58,10 +59,6 @@ interface HeaderProps {
   setProfileModalOpen: (open: boolean) => void;
   setChangePasswordModalOpen: (open: boolean) => void;
   setTwoFactorModalOpen: (open: boolean) => void;
-  adPosition: "top" | "right";
-  setAdPosition: (position: "top" | "right") => void;
-  showAd: boolean;
-  setShowAd: (show: boolean) => void;
   type: string | null | unknown;
 }
 
@@ -70,10 +67,6 @@ const Header: React.FC<HeaderProps> = ({
   setProfileModalOpen,
   setChangePasswordModalOpen,
   setTwoFactorModalOpen,
-  adPosition,
-  setAdPosition,
-  showAd,
-  setShowAd,
   type,
 }) => {
   const dispatch = useAppDispatch();
@@ -215,28 +208,19 @@ const Header: React.FC<HeaderProps> = ({
       </CustomDropdown>
       {isAuthenticated ? (
         <>
-          <PremiumButton>+ Premium</PremiumButton>
-
+          <PremiumButton>
+            <IconWrapper>
+              <PremiumPackIcon />
+            </IconWrapper>{" "}
+            Premium
+          </PremiumButton>
           <AvatarWrapper style={{ position: "relative" }}>
-            <AdsWrapper>
-              <CommonButton
-                onClick={() =>
-                  setAdPosition(adPosition === "top" ? "right" : "top")
-                }
-              >
-                Ad: {adPosition}
-              </CommonButton>
-              <CommonButton onClick={() => setShowAd(!showAd)}>
-                {showAd ? "Hide Ad" : "Show Ad"}
-              </CommonButton>
-            </AdsWrapper>
             <TokensLeft>Tokens left: 4</TokensLeft>
             <div ref={avatarDropdownRef} style={{ position: "relative" }}>
               <UserAvatar
-                style={{ cursor: "pointer" }}
                 onClick={() => setAvatarDropdownOpen((open) => !open)}
               >
-                👤
+                <img src={AuthLogo} alt="" />
               </UserAvatar>
               <CommonMotionDropdown open={avatarDropdownOpen} className="open">
                 <DropDownWrapper>
