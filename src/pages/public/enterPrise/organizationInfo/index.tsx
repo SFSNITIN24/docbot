@@ -7,7 +7,8 @@ import { ArrowLeftIcon } from "../../../../utils/svg";
 import CommonButton from "../../../../components/CommonButton";
 import CommonSelect from "../../../../components/CommonSelect";
 import { useNavigate  } from "react-router-dom";
-import { useAppSelector } from "../../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import { updateRegisterData } from "../../../../store/slices/registeruserSlice";
 
 type OrganizationFormValues = {
   organizationType: string;
@@ -16,21 +17,21 @@ type OrganizationFormValues = {
 
 const OrganizationInfoPage: React.FC = () => {
   const navigate = useNavigate();
-   const UserType = useAppSelector((state) => state.auth.user?.type);
+  const dispatch = useAppDispatch();
+  const registerUserDetail = useAppSelector((state) => state.registeruser);
 
   const onFinish = (values: unknown) => {
     const typedValues = values as OrganizationFormValues;
-    console.log("Form values:", typedValues);
-    if (UserType === "individual") {
-      navigate("/organization-admin-info?type=individual");
-    } else {
-      navigate("/two-factor-authentication?type=enterprise");
-    }
+    dispatch(updateRegisterData({
+      organization_name: typedValues.organizationName,
+      organization_type: typedValues.organizationType,
+    }));
+    navigate(`/organization-admin-info?type=${registerUserDetail?.account_type}`);
   };
 
   return (
     <AuthLayout
-      dashboardUrl="/"
+      dashboardUrl="/dashboard"
       topRightContent={
         <>
           Already have an account? <a href="/login">Sign in</a>
@@ -61,7 +62,7 @@ const OrganizationInfoPage: React.FC = () => {
           <CommonSelect
             placeholder="Organization Type"
             options={[
-              { label: "Private", value: "private" },
+              { label: "HealthCare", value: "healthcare" },
               { label: "Public", value: "public" },
               { label: "Non-Profit", value: "nonprofit" },
             ]}

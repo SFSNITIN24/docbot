@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Switch } from "antd";
+import { Form, Spin, Switch } from "antd";
 import styled from "styled-components";
 import AuthLayout from "../../../../components/AuthLayout";
 import CommonButton from "../../../../components/CommonButton";
@@ -8,7 +8,9 @@ import CommonRadioCardGroup, {
   type RadioCardOption,
 } from "../../../../components/CommonRadioCardGroup";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import { twoFactorAuthentication } from "../../../../service/Api_collecton";
+import { updateRegisterData } from "../../../../store/slices/registeruserSlice";
 
 const accountOptions: RadioCardOption[] = [
   {
@@ -22,24 +24,39 @@ const accountOptions: RadioCardOption[] = [
 ];
 
 type TwoFactorAuthenticationFormValues = {
-  enableTwoFactor: boolean;
+  enableTwoFactor: string;
   accountType: "phone" | "authenticator";
   promotionalDeals: boolean;
 };
 
 const TwoFactorAuthenticationPage: React.FC = () => {
   const [form] = Form.useForm();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-   const UserType = useAppSelector((state) => state.auth.user?.type);
+  const [loading, setLoading] = React.useState(false);
+  const registerUserDetail = useAppSelector((state) => state.registeruser);
 
-  const onFinish = (values: unknown) => {
+  const onFinish = async (values: unknown) => {
     const typedValues = values as TwoFactorAuthenticationFormValues;
-    console.log("Form values:", typedValues);
-    navigate(`/subscription?type=${UserType}`);
+    const params = new URLSearchParams();
+    params.append("is2FAEnabled", typedValues.enableTwoFactor);
+    params.append("method", typedValues.accountType);
+    setLoading(true);
+    const response = await twoFactorAuthentication(
+      registerUserDetail?.id,
+      params
+    );
+    setLoading(false);
+    if (response?.statusCode === 200 || response?.statusCode === 201) {
+      dispatch(
+        updateRegisterData({ ...registerUserDetail, ...response?.data?.user })
+      );
+      navigate(`/subscription?type=${registerUserDetail?.account_type}`);
+    }
   };
   return (
     <AuthLayout
-      dashboardUrl="/"
+      dashboardUrl="/dashboard"
       topRightContent={
         <>
           Already have an account? <a href="/login">Sign in</a>
@@ -48,43 +65,48 @@ const TwoFactorAuthenticationPage: React.FC = () => {
       title="2 Factor Authentication"
       text="You need to enable Two-Factor Authentication for your account."
     >
-      <FormWrapper
-        layout="vertical"
-        onFinish={onFinish}
-        form={form}
-        initialValues={{
-          enableTwoFactor: false,
-          accountType: "phone",
-          promotionalDeals: false,
-        }}
-      >
-        <div className="two-factor-switch">
-          <p>Enable Two-Factor Authentication</p>
-          <Form.Item
-            name="enableTwoFactor"
-            valuePropName="checked"
-            style={{ marginBottom: "0px" }}
-            initialValue={false}
-          >
-            <StyledSwitch />
-          </Form.Item>
-        </div>
-        <Form.Item
-          name="accountType"
-          initialValue="phone"
-          valuePropName="value"
-          trigger="onChange"
-          style={{ marginBottom: "0px" }}
+      <Spin spinning={loading}>
+        <FormWrapper
+          layout="vertical"
+          onFinish={onFinish}
+          form={form}
+          initialValues={{
+            enableTwoFactor: false,
+            accountType: "phone",
+            promotionalDeals: false,
+          }}
         >
-          <CommonRadioCardGroup options={accountOptions} flexDirection="row" />
-        </Form.Item>
-        
-        <Form.Item  style={{ marginBottom: "0px" ,marginTop:"20px"}}>
-          <CommonButton bgcolor="#62A8BF" color="#fff" bghovercolor="#62A8BF">
-            Continue <ArrowLeftIcon />
-          </CommonButton>
-        </Form.Item>
-      </FormWrapper>
+          <div className="two-factor-switch">
+            <p>Enable Two-Factor Authentication</p>
+            <Form.Item
+              name="enableTwoFactor"
+              valuePropName="checked"
+              style={{ marginBottom: "0px" }}
+              initialValue={false}
+            >
+              <StyledSwitch />
+            </Form.Item>
+          </div>
+          <Form.Item
+            name="accountType"
+            initialValue="phone"
+            valuePropName="value"
+            trigger="onChange"
+            style={{ marginBottom: "0px" }}
+          >
+            <CommonRadioCardGroup
+              options={accountOptions}
+              flexDirection="row"
+            />
+          </Form.Item>
+
+          <Form.Item style={{ marginBottom: "0px", marginTop: "20px" }}>
+            <CommonButton bgcolor="#62A8BF" color="#fff" bghovercolor="#62A8BF">
+              Continue <ArrowLeftIcon />
+            </CommonButton>
+          </Form.Item>
+        </FormWrapper>
+      </Spin>
     </AuthLayout>
   );
 };
@@ -96,7 +118,7 @@ const FormWrapper = styled(Form)`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  
+
   .two-factor-switch {
     width: 100%;
     display: flex;

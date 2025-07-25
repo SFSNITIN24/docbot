@@ -68,7 +68,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <AuthLayout
-      dashboardUrl="/"
+      dashboardUrl="/dashboard"
       topRightContent={
         <>
           Don’t have an account? <a href="/create-account">Sign up</a>
@@ -94,7 +94,13 @@ const LoginPage: React.FC = () => {
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: "Please enter your password" }]}
+          rules={[
+            { required: true, message: "Please enter your password" },
+            {
+              min: 6,
+              message: "Password must be at least 6 characters long",
+            },
+          ]}
           style={{ marginBottom: "0px" }}
         >
           <CommonInput

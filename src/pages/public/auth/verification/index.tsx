@@ -64,7 +64,7 @@ const VerificationPage: React.FC = () => {
 
   return (
     <AuthLayout
-      dashboardUrl="/"
+      dashboardUrl="/dashboard"
       topRightContent={
         <>
           Not a member yet? <a href="/join">JOIN NOW</a>

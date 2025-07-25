@@ -113,7 +113,7 @@
 // };
 
 // export default CommonInput;
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 interface CommonInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -198,6 +198,12 @@ const CommonInput: React.FC<CommonInputProps> = ({
   const showFloating = !!label;
   const floatLabel = isFocused || value;
 
+  useEffect(() => {
+    if (props.value !== undefined) {
+      setValue(props.value.toString());
+      setIsFocused(true)
+    }
+  }, [props.value]);
   return (
     <Wrapper $inputBorder={inputBorder}>
       {showFloating && (
@@ -225,6 +231,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
           setValue(e.target.value);
           props.onChange?.(e);
         }}
+        autoComplete="off"
       />
       {isPassword && (eyeIcon || eyeOffIcon) && (
         <IconWrapper

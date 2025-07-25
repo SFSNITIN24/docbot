@@ -1,16 +1,21 @@
 import React from "react";
-import { Form } from "antd";
+import { Form, Spin } from "antd";
 import styled from "styled-components";
 import AuthLayout from "../../../../components/AuthLayout";
 import CommonInput from "../../../../components/CommonInput";
 import { ArrowLeftIcon, EyeSlashIcon } from "../../../../utils/svg";
 import CommonButton from "../../../../components/CommonButton";
 import CommonSelect from "../../../../components/CommonSelect";
-import { useNavigate} from "react-router-dom";
-import { useAppSelector } from "../../../../store/hooks";
-
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import {
+  resetRegisterUser,
+  updateRegisterData,
+} from "../../../../store/slices/registeruserSlice";
+import { userRegister } from "../../../../service/Api_collecton";
+import { useNavigate } from "react-router-dom";
 type OrganizationFormValues = {
-  userName: string;
+  firstName: string;
+  lastName: string;
   organizationName: string;
   organizationType: string;
   email: string;
@@ -19,26 +24,41 @@ type OrganizationFormValues = {
 };
 
 const BasicInfoPage: React.FC = () => {
-  const [countryCode, setCountryCode] = React.useState("+1");
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-   const UserType = useAppSelector((state) => state.auth.user?.type);
+  const [countryCode, setCountryCode] = React.useState("+1");
+  const [loading, setLoading] = React.useState(false);
+  const registerUserDetail = useAppSelector((state) => state.registeruser);
 
-  const onFinish = (values: unknown) => {
+  const onFinish = async (values: unknown) => {
     const typedValues = values as OrganizationFormValues;
-
-    const fullPhone = `${countryCode} ${typedValues.phone}`;
     const countryCodewithPlus = `${countryCode}`;
-    console.log("Form values:", {
-      ...typedValues,
-      fullPhone,
-      countryCodewithPlus,
-    });
-    navigate(`/two-factor-authentication?type=${UserType}`);
+    const payload = {
+      account_type: registerUserDetail?.account_type,
+      first_name: typedValues.firstName,
+      last_name: typedValues.lastName,
+      organization_name: typedValues.organizationName,
+      organization_type: typedValues.organizationType,
+      email: typedValues.email,
+      phone_country_code: countryCodewithPlus,
+      phone_number: typedValues.phone,
+      password: typedValues.password,
+    };
+    setLoading(true);
+    const response = await userRegister(payload);
+    setLoading(false);
+    if (response?.statusCode === 200 || response?.statusCode === 201) {
+      dispatch(resetRegisterUser());
+      dispatch(updateRegisterData(response.data?.user));
+      navigate(
+        `/two-factor-authentication?type=${registerUserDetail?.account_type}`
+      );
+    }
   };
 
   return (
     <AuthLayout
-      dashboardUrl="/"
+      dashboardUrl="/dashboard"
       topRightContent={
         <>
           Already have an account? <a href="/login">Sign in</a>
@@ -47,105 +67,150 @@ const BasicInfoPage: React.FC = () => {
       title="Basic Account Info"
       text="Enter the basic account Info"
     >
-      <FormWrapper layout="vertical" onFinish={onFinish}>
-        <Form.Item
-          name="userName"
-          rules={[{ required: true, message: "Please enter your User Name" }]}
-          style={{ marginBottom: "0px" }}
-        >
-          <CommonInput
-            type="text"
-            placeholder="Username"
-            label="Username"
-            inputBorder="1px solid #D9D9D9"
-          />
-        </Form.Item>
-        <Form.Item
-          name="organizationName"
-          rules={[
-            { required: true, message: "Please enter your organization name" },
-          ]}
-          style={{ marginBottom: "0px" }}
-        >
-          <CommonInput type="text" placeholder="Organization/AffIiation Name" />
-        </Form.Item>
-        <Form.Item
-          name="organizationType"
-          rules={[
-            { required: true, message: "Please select organization type" },
-          ]}
-          style={{ marginBottom: "0px" }}
-        >
-          <CommonSelect
-            placeholder="Organization Type"
-            options={[
-              { label: "Private", value: "private" },
-              { label: "Public", value: "public" },
-              { label: "Non-Profit", value: "nonprofit" },
+      <Spin spinning={loading}>
+        <FormWrapper layout="vertical" onFinish={onFinish}>
+          <Form.Item
+            name="firstName"
+            rules={[
+              { required: true, message: "Please enter your first name" },
             ]}
-            border="1px solid #D9D9D9"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="email"
-          rules={[{ required: true, message: "Please enter your email" }]}
-          style={{ marginBottom: "0px" }}
-        >
-          <CommonInput type="email" placeholder="Email Address" />
-        </Form.Item>
-        <Form.Item name="phone" style={{ marginBottom: "0px" }}>
-          <PhoneRow>
+            style={{ marginBottom: "0px" }}
+          >
+            <CommonInput
+              type="text"
+              placeholder="First Name"
+              label="First Name"
+              inputBorder="1px solid #D9D9D9"
+            />
+          </Form.Item>
+          <Form.Item
+            name="lastName"
+            rules={[{ required: true, message: "Please enter your last name" }]}
+            style={{ marginBottom: "0px" }}
+          >
+            <CommonInput
+              type="text"
+              placeholder="Last Name"
+              inputBorder="1px solid #D9D9D9"
+            />
+          </Form.Item>
+          <Form.Item
+            name="organizationName"
+            rules={[
+              {
+                required: true,
+                message: "Please enter your organization name",
+              },
+            ]}
+            style={{ marginBottom: "0px" }}
+          >
+            <CommonInput
+              type="text"
+              placeholder="Organization/AffIiation Name"
+            />
+          </Form.Item>
+          <Form.Item
+            name="organizationType"
+            rules={[
+              { required: true, message: "Please select organization type" },
+            ]}
+            style={{ marginBottom: "0px" }}
+          >
             <CommonSelect
-              style={{ maxWidth: 94 }}
+              placeholder="Organization Type"
               options={[
-                {
-                  value: "+1",
-                  label: (
-                    <>
-                      <img
-                        src="https://flagcdn.com/us.svg"
-                        alt="US"
-                        style={{
-                          width: 20,
-                          marginRight: 4,
-                          verticalAlign: "middle",
-                        }}
-                      />
-                      +1
-                    </>
-                  ),
-                },
+                { label: "Private", value: "private" },
+                { label: "Public", value: "public" },
+                { label: "Non-Profit", value: "nonprofit" },
               ]}
-              value={countryCode}
-              onChange={(val) => setCountryCode(val)}
               border="1px solid #D9D9D9"
             />
+          </Form.Item>
+
+          <Form.Item
+            name="email"
+            rules={[{ required: true, message: "Please enter your email" }]}
+            style={{ marginBottom: "0px" }}
+          >
+            <CommonInput type="email" placeholder="Email Address" />
+          </Form.Item>
+          <Form.Item
+            name="phone"
+            style={{ marginBottom: "0px" }}
+            rules={[
+              { required: true, message: "Please enter your phone number" },
+              {
+                pattern: /^\d+$/,
+                message: "Phone number must contain only digits",
+              },
+              {
+                validator: (_, value) =>
+                  value && value.length >= 10
+                    ? Promise.resolve()
+                    : Promise.reject(
+                        new Error("Phone number must be at least 10 digits")
+                      ),
+              },
+            ]}
+          >
+            <PhoneRow>
+              <CommonSelect
+                style={{ maxWidth: 94 }}
+                options={[
+                  {
+                    value: "+1",
+                    label: (
+                      <>
+                        <img
+                          src="https://flagcdn.com/us.svg"
+                          alt="US"
+                          style={{
+                            width: 20,
+                            marginRight: 4,
+                            verticalAlign: "middle",
+                          }}
+                        />
+                        +1
+                      </>
+                    ),
+                  },
+                ]}
+                value={countryCode}
+                onChange={(val) => setCountryCode(val)}
+                border="1px solid #D9D9D9"
+              />
+              <CommonInput
+                type="tel"
+                placeholder="Enter Phone Number"
+                style={{ flex: 1 }}
+              />
+            </PhoneRow>
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[
+              { required: true, message: "Please enter your password" },
+              {
+                min: 6,
+                message: "Password must be at least 6 characters long",
+              },
+            ]}
+            style={{ marginBottom: "0px" }}
+          >
             <CommonInput
-              type="tel"
-              placeholder="Enter Phone Number"
-              style={{ flex: 1 }}
+              type="password"
+              placeholder="Password"
+              eyeIcon={<EyeSlashIcon />}
+              eyeOffIcon={<EyeSlashIcon />}
             />
-          </PhoneRow>
-        </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: "Please enter your email" }]}
-          style={{ marginBottom: "0px" }}
-        >
-          <CommonInput
-            type="password"
-            placeholder="Password"
-            eyeIcon={<EyeSlashIcon />}
-            eyeOffIcon={<EyeSlashIcon />}
-          />
-        </Form.Item>
-        <Form.Item style={{ marginBottom: "0px" }}>
-          <CommonButton bgcolor="#62A8BF" color="#fff" bghovercolor="#62A8BF">
-            Continue <ArrowLeftIcon />
-          </CommonButton>
-        </Form.Item>
-      </FormWrapper>
+          </Form.Item>
+          <Form.Item style={{ marginBottom: "0px" }}>
+            <CommonButton bgcolor="#62A8BF" color="#fff" bghovercolor="#62A8BF">
+              Continue <ArrowLeftIcon />
+            </CommonButton>
+          </Form.Item>
+        </FormWrapper>
+      </Spin>
     </AuthLayout>
   );
 };

@@ -106,7 +106,25 @@ const AdminProfile = () => {
             inputBorder="1px solid #D9D9D9"
           />
         </Form.Item>
-        <Form.Item name="phone" style={{ marginBottom: "0px" }}>
+        <Form.Item
+          name="phone"
+          style={{ marginBottom: "0px" }}
+          rules={[
+            { required: true, message: "Please enter your phone number" },
+            {
+              pattern: /^\d+$/,
+              message: "Phone number must contain only digits",
+            },
+            {
+              validator: (_, value) =>
+                value && value.length >= 10
+                  ? Promise.resolve()
+                  : Promise.reject(
+                      new Error("Phone number must be at least 10 digits")
+                    ),
+            },
+          ]}
+        >
           <PhoneRow>
             <CommonSelect
               style={{ maxWidth: 94 }}
@@ -141,7 +159,7 @@ const AdminProfile = () => {
             />
           </PhoneRow>
         </Form.Item>
-        
+
         <Form.Item style={{ marginBottom: "0px" }}>
           <CommonButton
             bgcolor="#62A8BF"
@@ -164,7 +182,6 @@ const ProfilelWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 32px;
-  
 `;
 
 const ProfileTitle = styled.h2`

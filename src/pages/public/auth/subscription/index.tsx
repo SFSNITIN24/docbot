@@ -109,7 +109,7 @@ const SubscriptionPage: React.FC = () => {
 
   return (
     <AuthLayout
-      dashboardUrl="/"
+      dashboardUrl="/dashboard"
       otherText="Choose a plan that suits you and begin your Medical <br/> AI journey today."
       formMaxWidth="100%"
     >

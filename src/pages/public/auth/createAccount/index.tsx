@@ -9,6 +9,8 @@ import CommonRadioCardGroup, {
 } from "../../../../components/CommonRadioCardGroup";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../../../components/AuthLayout";
+import { updateRegisterData } from "../../../../store/slices/registeruserSlice";
+import { useAppDispatch } from "../../../../store/hooks";
 
 const accountOptions: RadioCardOption[] = [
   {
@@ -19,29 +21,31 @@ const accountOptions: RadioCardOption[] = [
   {
     label: "Enterprise Account",
     description: "Sign up as an enterprise account",
-    value: "enterprise",
+    value: "organization_admin",
   },
 ];
 type CreateAccountFormValues = {
-  accountType: "individual" | "enterprise";
+  accountType: "individual" | "organization_admin";
 };
 
 const CreateAccountPage: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch(); 
   const [form] = Form.useForm();
 
   const onFinish = (values: unknown) => {
     const typedValues = values as CreateAccountFormValues;
-    if (typedValues.accountType === "individual") {
-      navigate("/organization-Info?type=individual");
-    } else if (typedValues.accountType === "enterprise") {
-      navigate("/basic-Info?type=enterprise");
+    if (typedValues.accountType === "organization_admin") {
+      navigate("/organization-Info?type=organization_admin");
+    } else if (typedValues.accountType === "individual") {
+      navigate("/basic-Info?type=individual");
     }
+    dispatch(updateRegisterData({ account_type: typedValues.accountType }));
   };
 
   return (
     <AuthLayout
-      dashboardUrl="/"
+      dashboardUrl="/dashboard"
       topRightContent={
         <>
           Already have an account? <a href="/login">Sign in</a>

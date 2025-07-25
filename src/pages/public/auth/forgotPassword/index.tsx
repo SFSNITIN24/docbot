@@ -20,7 +20,7 @@ const ForgotPasswordPage: React.FC = () => {
 
   return (
     <AuthLayout
-      dashboardUrl="/"
+      dashboardUrl="/dashboard"
       topRightContent={
         <>
           Don’t have an account? <a href="/create-account">Sign up</a>
