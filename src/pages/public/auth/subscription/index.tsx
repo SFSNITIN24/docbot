@@ -3,6 +3,7 @@ import CommonPackageCard from "../../../../components/CommonPackageCard";
 import AuthLayout from "../../../../components/AuthLayout";
 import styled from "styled-components";
 import { useAppSelector } from "../../../../store/hooks";
+import { useNavigate } from "react-router-dom";
 
 const enterprisePackages = [
   {
@@ -101,10 +102,13 @@ const individualPackages = [
 ];
 
 const SubscriptionPage: React.FC = () => {
+  const navigate = useNavigate();
    const UserType = useAppSelector((state) => state.auth.user?.type);
 
   const handleSelect = (title: string) => {
     alert(`Selected package: ${title}`);
+    navigate("/login")
+    localStorage.removeItem('registration_account_type');
   };
 
   return (

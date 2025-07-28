@@ -1,7 +1,7 @@
 import React from "react";
 import { Form } from "antd";
 import styled from "styled-components";
-import { EyeSlashIcon, LockIcon } from "../../../utils/svg";
+import { EyeIcon, EyeSlashIcon, LockIcon } from "../../../utils/svg";
 import CommonInput from "../../../components/CommonInput";
 import CommonButton from "../../../components/CommonButton";
 
@@ -39,7 +39,7 @@ const ChnagePasswordPage: React.FC = () => {
             type="password"
             placeholder="Old Password"
             leftIcon={<LockIcon />}
-            eyeIcon={<EyeSlashIcon />}
+            eyeIcon={<EyeIcon />}
             eyeOffIcon={<EyeSlashIcon />}
             inputBorder="1px solid #D9D9D9"
           />
@@ -55,7 +55,7 @@ const ChnagePasswordPage: React.FC = () => {
             type="password"
             placeholder="New Password"
             leftIcon={<LockIcon />}
-            eyeIcon={<EyeSlashIcon />}
+            eyeIcon={<EyeIcon />}
             eyeOffIcon={<EyeSlashIcon />}
             inputBorder="1px solid #D9D9D9"
           />
@@ -80,7 +80,7 @@ const ChnagePasswordPage: React.FC = () => {
             type="password"
             placeholder="Re-enter password"
             leftIcon={<LockIcon />}
-            eyeIcon={<EyeSlashIcon />}
+            eyeIcon={<EyeIcon />}
             inputBorder="1px solid #D9D9D9"
             eyeOffIcon={<EyeSlashIcon />}
           />

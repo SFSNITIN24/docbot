@@ -1,20 +1,23 @@
-import React from "react";
-import { Form } from "antd";
+import React, { useState } from "react";
+import { Form, Spin } from "antd";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+import { toast } from "sonner";
 import AuthLayout from "../../../../components/AuthLayout";
 import CommonInput from "../../../../components/CommonInput";
 import {
   ArrowLeftIcon,
   EnvelopeIcon,
+  EyeIcon,
   EyeSlashIcon,
   LockIcon,
 } from "../../../../utils/svg";
 import CommonCheckbox from "../../../../components/CommonCheckbox";
 import CommonButton from "../../../../components/CommonButton";
-import { checkTFA } from "../../../../utils/tfa";
 import { useAppDispatch } from "../../../../store/hooks";
-import { loginSuccess, verifyTfa } from "../../../../store/slices/authSlice";
+import { loginSuccess} from "../../../../store/slices/authSlice";
+import { userLogin } from "../../../../service/Api_collecton";
 
 type LoginFormValues = {
   username: string;
@@ -25,44 +28,25 @@ type LoginFormValues = {
 const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = (values: unknown) => {
+  const onFinish = async (values: unknown) => {
     const typedValues = values as LoginFormValues;
-
-    const dummyUser = {
-      id: "Nitin587",
-      name: "Nitin Kumar",
+    const payload = {
       email: typedValues.username,
-      remember: typedValues.remember,
-      type: "enterprise",
+      password: typedValues.password,
+      deviceId: uuidv4(),
+      deviceType: "web",
     };
-
-    const token = "fake-jwt-token-123456789";
-    const trusted = checkTFA();
-    const isTrustedUser = trusted === typedValues.username;
-
-    if (isTrustedUser) {
-      dispatch(loginSuccess({ user: dummyUser, token }));
-      dispatch(verifyTfa());
-
-      if (typedValues.remember) {
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(dummyUser));
-        localStorage.setItem("loginTimestamp", Date.now().toString());
-      } else {
-        sessionStorage.setItem("token", token);
-        sessionStorage.setItem("user", JSON.stringify(dummyUser));
-      }
-
-      navigate("/chat");
-    } else {
-      if (typedValues.remember) {
-        localStorage.setItem("pendingUser", JSON.stringify(dummyUser));
-      } else {
-        sessionStorage.setItem("pendingUser", JSON.stringify(dummyUser));
-      }
-
+    setLoading(true);
+    const response = await userLogin(payload);
+    setLoading(false);
+    if (response?.statusCode === 200 || response?.statusCode === 201) {
+      dispatch(loginSuccess({ user: response.data }));
+      toast.success(response.message);
       navigate("/otp");
+    } else {
+      toast.error(response?.message);
     }
   };
 
@@ -77,60 +61,65 @@ const LoginPage: React.FC = () => {
       title="Welcome Back!"
       text="Sign in to unlock the full potential of AI with us."
     >
-      <FormWrapper layout="vertical" onFinish={onFinish}>
-        <Form.Item
-          name="username"
-          rules={[
-            { required: true, message: "Please enter your username or email" },
-          ]}
-          style={{ marginBottom: "0px" }}
-        >
-          <CommonInput
-            type="text"
-            placeholder="Username or Email"
-            label="Username/Email address"
-            leftIcon={<EnvelopeIcon />}
-          />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[
-            { required: true, message: "Please enter your password" },
-            {
-              min: 6,
-              message: "Password must be at least 6 characters long",
-            },
-          ]}
-          style={{ marginBottom: "0px" }}
-        >
-          <CommonInput
-            type="password"
-            placeholder="Password"
-            leftIcon={<LockIcon />}
-            eyeIcon={<EyeSlashIcon />}
-            eyeOffIcon={<EyeSlashIcon />}
-          />
-        </Form.Item>
-        <div className="remember-forget">
+      <Spin spinning={loading}>
+        <FormWrapper layout="vertical" onFinish={onFinish}>
           <Form.Item
-            name="remember"
-            valuePropName="checked"
+            name="username"
+            rules={[
+              {
+                required: true,
+                message: "Please enter your username or email",
+              },
+            ]}
             style={{ marginBottom: "0px" }}
           >
-            <div className="remember-me">
-              <CommonCheckbox />
-              <p>Remember for 30 days</p>
-            </div>
+            <CommonInput
+              type="text"
+              placeholder="Username or Email"
+              label="Username/Email address"
+              leftIcon={<EnvelopeIcon />}
+            />
           </Form.Item>
-          <a href="/forgot">Forgot password?</a>
-        </div>
+          <Form.Item
+            name="password"
+            rules={[
+              { required: true, message: "Please enter your password" },
+              {
+                min: 8,
+                message: "Password must be at least 8 characters long",
+              },
+            ]}
+            style={{ marginBottom: "0px" }}
+          >
+            <CommonInput
+              type="password"
+              placeholder="Password"
+              leftIcon={<LockIcon />}
+              eyeIcon={<EyeIcon />}
+              eyeOffIcon={<EyeSlashIcon />}
+            />
+          </Form.Item>
+          <div className="remember-forget">
+            <Form.Item
+              name="remember"
+              valuePropName="checked"
+              style={{ marginBottom: "0px" }}
+            >
+              <div className="remember-me">
+                <CommonCheckbox />
+                <p>Remember for 30 days</p>
+              </div>
+            </Form.Item>
+            <a href="/forgot">Forgot password?</a>
+          </div>
 
-        <Form.Item style={{ marginBottom: "0px" }}>
-          <CommonButton bgcolor="#62A8BF" color="#fff" bghovercolor="#62A8BF">
-            Sign in <ArrowLeftIcon />
-          </CommonButton>
-        </Form.Item>
-      </FormWrapper>
+          <Form.Item style={{ marginBottom: "0px" }}>
+            <CommonButton bgcolor="#62A8BF" color="#fff" bghovercolor="#62A8BF">
+              Sign in <ArrowLeftIcon />
+            </CommonButton>
+          </Form.Item>
+        </FormWrapper>
+      </Spin>
     </AuthLayout>
   );
 };

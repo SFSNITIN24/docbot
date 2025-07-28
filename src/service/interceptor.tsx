@@ -15,7 +15,6 @@ Api.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
 Api.interceptors.request.use(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (config: any) => {
-    console.log((store?.getState()as RootState),"ssasasas")
     if ((store?.getState()as RootState)?.auth?.token) {
      const token = `Bearer ${(store.getState() as RootState).auth?.token}`;
       config.headers = {

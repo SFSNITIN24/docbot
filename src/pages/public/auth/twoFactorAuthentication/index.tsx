@@ -8,24 +8,26 @@ import CommonRadioCardGroup, {
   type RadioCardOption,
 } from "../../../../components/CommonRadioCardGroup";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import { useAppDispatch } from "../../../../store/hooks";
 import { twoFactorAuthentication } from "../../../../service/Api_collecton";
 import { updateRegisterData } from "../../../../store/slices/registeruserSlice";
+import { useRegistrationGuard } from "../../../../hooks/useRegistrationGuard";
+import { TwoFAMethod } from "../../../../enums";
 
 const accountOptions: RadioCardOption[] = [
   {
     label: "Phone Number",
-    value: "phone",
+    value: TwoFAMethod.PHONE_OTP,
   },
   {
     label: "Authenticator App",
-    value: "authenticator",
+    value: TwoFAMethod.AUTHENTICATOR,
   },
 ];
 
 type TwoFactorAuthenticationFormValues = {
   enableTwoFactor: string;
-  accountType: "phone" | "authenticator";
+  accountType: TwoFAMethod;
   promotionalDeals: boolean;
 };
 
@@ -34,7 +36,7 @@ const TwoFactorAuthenticationPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
-  const registerUserDetail = useAppSelector((state) => state.registeruser);
+  const registerUserDetail = useRegistrationGuard();
 
   const onFinish = async (values: unknown) => {
     const typedValues = values as TwoFactorAuthenticationFormValues;
@@ -44,7 +46,7 @@ const TwoFactorAuthenticationPage: React.FC = () => {
     setLoading(true);
     const response = await twoFactorAuthentication(
       registerUserDetail?.id,
-      params
+      params.toString()
     );
     setLoading(false);
     if (response?.statusCode === 200 || response?.statusCode === 201) {
@@ -72,7 +74,7 @@ const TwoFactorAuthenticationPage: React.FC = () => {
           form={form}
           initialValues={{
             enableTwoFactor: false,
-            accountType: "phone",
+            accountType: TwoFAMethod.PHONE_OTP,
             promotionalDeals: false,
           }}
         >
@@ -89,7 +91,7 @@ const TwoFactorAuthenticationPage: React.FC = () => {
           </div>
           <Form.Item
             name="accountType"
-            initialValue="phone"
+            initialValue={TwoFAMethod.PHONE_OTP}
             valuePropName="value"
             trigger="onChange"
             style={{ marginBottom: "0px" }}

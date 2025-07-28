@@ -3,16 +3,18 @@ import { Form, Spin } from "antd";
 import styled from "styled-components";
 import AuthLayout from "../../../../components/AuthLayout";
 import CommonInput from "../../../../components/CommonInput";
-import { ArrowLeftIcon, EyeSlashIcon } from "../../../../utils/svg";
+import { ArrowLeftIcon, EyeIcon, EyeSlashIcon } from "../../../../utils/svg";
 import CommonButton from "../../../../components/CommonButton";
 import CommonSelect from "../../../../components/CommonSelect";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import { useAppDispatch } from "../../../../store/hooks";
 import { userRegister } from "../../../../service/Api_collecton";
 import {
   resetRegisterUser,
   updateRegisterData,
 } from "../../../../store/slices/registeruserSlice";
+import { useRegistrationGuard } from "../../../../hooks/useRegistrationGuard";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 type OrganizationFormValues = {
   firstName: string;
@@ -24,21 +26,14 @@ type OrganizationFormValues = {
 };
 
 const OrganizationAdminInfoPage: React.FC = () => {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = React.useState(false);
   const [countryCode, setCountryCode] = React.useState("+1");
-  const registerUserDetail = useAppSelector((state) => state.registeruser);
+  const registerUserDetail = useRegistrationGuard();
   const onFinish = async (values: unknown) => {
     const typedValues = values as OrganizationFormValues;
-
-    const fullPhone = `${countryCode} ${typedValues.phone}`;
     const countryCodewithPlus = `${countryCode}`;
-    console.log("Form values:", {
-      ...typedValues,
-      fullPhone,
-      countryCodewithPlus,
-    });
     const payload = {
       account_type: registerUserDetail?.account_type,
       first_name: typedValues.firstName,
@@ -56,9 +51,12 @@ const OrganizationAdminInfoPage: React.FC = () => {
     if (response?.statusCode === 200 || response?.statusCode === 201) {
       dispatch(resetRegisterUser());
       dispatch(updateRegisterData(response.data?.user));
+      toast.success(response.message);
       navigate(
         `/two-factor-authentication?type=${registerUserDetail?.account_type}`
       );
+    } else {
+      toast.error(response?.message);
     }
   };
 
@@ -112,12 +110,8 @@ const OrganizationAdminInfoPage: React.FC = () => {
                 message: "Phone number must contain only digits",
               },
               {
-                validator: (_, value) =>
-                  value && value.length >= 10
-                    ? Promise.resolve()
-                    : Promise.reject(
-                        new Error("Phone number must be at least 10 digits")
-                      ),
+                pattern: /^\d{10}$/,
+                message: "Phone number must be exactly 10 digits",
               },
             ]}
           >
@@ -169,7 +163,7 @@ const OrganizationAdminInfoPage: React.FC = () => {
             <CommonInput
               type="password"
               placeholder="Password"
-              eyeIcon={<EyeSlashIcon />}
+              eyeIcon={<EyeIcon />}
               eyeOffIcon={<EyeSlashIcon />}
             />
           </Form.Item>
@@ -192,7 +186,7 @@ const OrganizationAdminInfoPage: React.FC = () => {
             <CommonInput
               type="password"
               placeholder="Confirmation Password"
-              eyeIcon={<EyeSlashIcon />}
+              eyeIcon={<EyeIcon />}
               eyeOffIcon={<EyeSlashIcon />}
             />
           </Form.Item>

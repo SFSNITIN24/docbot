@@ -41,6 +41,7 @@ const CreateAccountPage: React.FC = () => {
       navigate("/basic-Info?type=individual");
     }
     dispatch(updateRegisterData({ account_type: typedValues.accountType }));
+    localStorage.setItem('registration_account_type', typedValues.accountType);
   };
 
   return (

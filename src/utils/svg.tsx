@@ -462,7 +462,7 @@ export const DropDownCheckIcon = () => {
   );
 };
 
-export const UploadFileInChatIcon :React.FC<UploadFileInChatIconProps> =() => {
+export const UploadFileInChatIcon: React.FC<UploadFileInChatIconProps> = () => {
   return (
     <svg
       width="21"
@@ -707,6 +707,33 @@ export const PremiumPackIcon = () => {
       <path
         d="M7.6785 0.650331C7.77298 0.338562 8.22663 0.338562 8.3211 0.650331L8.98239 2.92734C9.49255 4.65624 10.8436 6.00705 12.5725 6.51722L14.8493 7.17873C15.161 7.27321 15.161 7.7264 14.8493 7.82087L12.5725 8.48239C10.8436 8.99255 9.49255 10.3434 8.98239 12.0723L8.3211 14.3493C8.22663 14.661 7.77298 14.661 7.6785 14.3493L7.01722 12.0723C6.50705 10.3434 5.15601 8.99255 3.42711 8.48239L1.15033 7.82087C0.838562 7.7264 0.838562 7.27321 1.15033 7.17873L3.42711 6.51722C5.15601 6.00705 6.50705 4.65624 7.01722 2.92734L7.6785 0.650331Z"
         fill="#62A8BF"
+      />
+    </svg>
+  );
+};
+
+export const EyeIcon = () => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 5.25C4.5 5.25 1.5 12 1.5 12C1.5 12 4.5 18.75 12 18.75C19.5 18.75 22.5 12 22.5 12C22.5 12 19.5 5.25 12 5.25Z"
+        stroke="#767676"
+        stroke-width="1.125"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25C9.92893 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92893 15.75 12 15.75Z"
+        stroke="#767676"
+        stroke-width="1.125"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       />
     </svg>
   );

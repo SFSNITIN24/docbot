@@ -6,9 +6,10 @@ import CommonInput from "../../../../components/CommonInput";
 import { ArrowLeftIcon } from "../../../../utils/svg";
 import CommonButton from "../../../../components/CommonButton";
 import CommonSelect from "../../../../components/CommonSelect";
-import { useNavigate  } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import { useAppDispatch } from "../../../../store/hooks";
 import { updateRegisterData } from "../../../../store/slices/registeruserSlice";
+import { useRegistrationGuard } from "../../../../hooks/useRegistrationGuard";
+import { useNavigate } from "react-router-dom";
 
 type OrganizationFormValues = {
   organizationType: string;
@@ -18,7 +19,7 @@ type OrganizationFormValues = {
 const OrganizationInfoPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const registerUserDetail = useAppSelector((state) => state.registeruser);
+  const registerUserDetail = useRegistrationGuard();
 
   const onFinish = (values: unknown) => {
     const typedValues = values as OrganizationFormValues;

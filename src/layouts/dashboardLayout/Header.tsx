@@ -76,7 +76,7 @@ const Header: React.FC<HeaderProps> = ({
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const avatarDropdownRef = useRef<HTMLDivElement>(null);
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const { token } = useAppSelector((state) => state.auth);
 
   const handleClick = useCallback(
     (path: string) => () => navigate(path),
@@ -206,7 +206,7 @@ const Header: React.FC<HeaderProps> = ({
           </CustomDropdownMenu>
         </CommonMotionDropdown>
       </CustomDropdown>
-      {isAuthenticated ? (
+      {token ? (
         <>
           <PremiumButton>
             <IconWrapper>

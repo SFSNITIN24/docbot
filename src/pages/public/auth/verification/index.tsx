@@ -1,102 +1,120 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input } from "antd";
+import { Form, Input, Spin } from "antd";
 import styled from "styled-components";
 import AuthLayout from "../../../../components/AuthLayout";
 import { ArrowLeftIcon } from "../../../../utils/svg";
 import CommonButton from "../../../../components/CommonButton";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../../../store/hooks";
-import { loginSuccess, verifyTfa } from "../../../../store/slices/authSlice";
-import { storeTFA } from "../../../../utils/tfa";
-type PendingUser = {
-  id: string;
-  name: string;
-  email: string;
-  remember?: boolean;
-};
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import {
+  loginSuccess,
+  setToken,
+} from "../../../../store/slices/authSlice";
+import {
+  verifyPasswordResetOtp,
+  verifyTwoFactorAuthentication,
+} from "../../../../service/Api_collecton";
+import { toast } from "sonner";
 
 const VerificationPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
-  const [pendingUser, setPendingUser] = useState<PendingUser | null>(null);
+  const { user } = useAppSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false);
+  const pathname = window.location.pathname;
+
 
   useEffect(() => {
-    const data =
-      localStorage.getItem("pendingUser") ||
-      sessionStorage.getItem("pendingUser");
-    if (data) {
-      setPendingUser(JSON.parse(data));
-    } else {
-      navigate("/login");
+    // If navigating to /reset, ensure user has resetToken
+    if (window.location.pathname === "/reset" && (!user || !user.resetToken)) {
+      navigate("/forgot", { replace: true });
     }
-  }, [navigate]);
-  const handleVerify = () => {
-    if (!pendingUser) {
-      console.error("Pending user or email missing.");
-      return;
-    }
+  }, [user, navigate]);
 
+  const handleVerify = async () => {
     if (otp.length !== 6) {
       alert("Enter valid 6-digit OTP");
       return;
     }
-
-    const token = "fake-jwt-token-123456789";
-
-    dispatch(loginSuccess({ user: pendingUser, token }));
-    dispatch(verifyTfa());
-
-    if (pendingUser?.remember) {
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(pendingUser));
-      storeTFA(pendingUser.email);
+    setLoading(true);
+    if (user?.user_id) {
+      const payload = {
+        user_id: user?.user_id,
+        code: otp,
+        device_type: "web",
+        device_id: "web-device-id",
+      };
+      const response = await verifyTwoFactorAuthentication(payload);
+      setLoading(false);
+      dispatch(loginSuccess({ user: response?.data?.user }));
+      dispatch(setToken(response?.data?.token));
+      navigate("/chat");
     } else {
-      sessionStorage.setItem("token", token);
-      sessionStorage.setItem("user", JSON.stringify(pendingUser));
+      const payload = {
+        email: user?.email,
+        otp: otp,
+      };
+      const response = await verifyPasswordResetOtp(payload);
+      setLoading(false);
+      if (response?.statusCode === 200 || response?.statusCode === 201) {
+        toast.success(response.message);
+        dispatch(loginSuccess({ user: response?.data }));
+        navigate("/reset");
+      } else {
+        toast.error(response?.message);
+      }
     }
-
-    localStorage.removeItem("pendingUser");
-    sessionStorage.removeItem("pendingUser");
-
-    navigate("/chat");
   };
+
+  const contactInfo =
+    pathname === "/otp"
+      ? (user?.phone_country_code ?? "") + " " + (user?.phone_number ?? "")
+      : user?.email ?? "";
+
+  const verificationText = `Please enter the 6-digit verification code sent <br/> ${contactInfo}`;
 
   return (
     <AuthLayout
       dashboardUrl="/dashboard"
       topRightContent={
         <>
-          Not a member yet? <a href="/join">JOIN NOW</a>
+          Not a member yet? <a href="/create-account">JOIN NOW</a>
         </>
       }
       title="Verification"
-      text="Please enter the 6-digit verification code sent <br/> +1 255-XXX-XXXX"
+      text={verificationText}
     >
-      <FormWrapper>
-        <OtpWrapper>
-          <Input.OTP
-            prefixCls="otp-box"
-            size="large"
-            formatter={(str) => str.toUpperCase()}
-            type="tel"
-            inputMode="numeric"
-            value={otp}
-            onChange={setOtp}
-          />
-        </OtpWrapper>
+      <Spin spinning={loading}>
+        {/* <>
+          <p>Scan this QR code with Google Authenticator or Authy:</p>
+          <img src={user?.qr_code} alt="2FA QR Code" width="200" height="200" />
+        </> */}
+        <FormWrapper>
+          <OtpWrapper>
+            <Input.OTP
+              prefixCls="otp-box"
+              size="large"
+              formatter={(str) => str.toUpperCase()}
+              type="tel"
+              inputMode="numeric"
+              value={otp}
+              onChange={setOtp}
+            />
+          </OtpWrapper>
 
-        <p>Resend Code</p>
+          <p>Resend Code</p>
 
-        <CommonButton
-          bgcolor="#62A8BF"
-          color="#fff"
-          bghovercolor="#62A8BF"
-          onClick={handleVerify}
-        >
-          Verify <ArrowLeftIcon />
-        </CommonButton>
-      </FormWrapper>
+          <CommonButton
+            bgcolor="#62A8BF"
+            color="#fff"
+            bghovercolor="#62A8BF"
+            onClick={handleVerify}
+          >
+            Verify <ArrowLeftIcon />
+          </CommonButton>
+        </FormWrapper>
+      </Spin>
     </AuthLayout>
   );
 };

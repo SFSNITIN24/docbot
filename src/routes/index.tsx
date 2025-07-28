@@ -24,6 +24,24 @@ import DashboardLayout from "../layouts/dashboardLayout/DashboardLayout";
 import OrganizationSetting from "../pages/private/organizationSetting";
 import ManageSubscription from "../pages/private/manageSubscription";
 
+// Guard for OTP Verification
+const OtpVerificationGuard = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAppSelector((state) => state.auth);
+  if (!user || !user.email) {
+    return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+};
+
+// Guard for Reset Password
+const ResetPasswordGuard = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAppSelector((state) => state.auth);
+  if (!user || !user.resetToken) {
+    return <Navigate to="/forgot" replace />;
+  }
+  return <>{children}</>;
+};
+
 const PrivateRoute = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
   return isAuthenticated ? <Outlet /> : <Navigate to="/dashboard" replace />;
 };
@@ -33,7 +51,7 @@ const PublicRoute = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
 };
 
 const Routing = () => {
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const isAuthenticated = useAppSelector((state) => state.auth.isTfaVerified);
 
   return (
     <BrowserRouter>
@@ -43,9 +61,31 @@ const Routing = () => {
           <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="/dashboard" element={<DashboardLayout />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/otp" element={<VerificationPage />} />
+          <Route
+            path="/otp"
+            element={
+              <OtpVerificationGuard>
+                <VerificationPage />
+              </OtpVerificationGuard>
+            }
+          />
           <Route path="/forgot" element={<ForgotPasswordPage />} />
-          <Route path="/reset" element={<ResetPasswordPage />} />
+          <Route
+            path="/otp-verification"
+            element={
+              <OtpVerificationGuard>
+                <VerificationPage />
+              </OtpVerificationGuard>
+            }
+          />
+          <Route
+            path="/reset"
+            element={
+              <ResetPasswordGuard>
+                <ResetPasswordPage />
+              </ResetPasswordGuard>
+            }
+          />
           <Route path="/create-account" element={<CreateAccountPage />} />
           <Route path="/organization-info" element={<OrganizationInfoPage />} />
           <Route
