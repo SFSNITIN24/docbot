@@ -1,14 +1,14 @@
 import React from "react";
 import { Form } from "antd";
 import styled from "styled-components";
-import AuthLayout from "../../../../components/AuthLayout";
-import CommonInput from "../../../../components/CommonInput";
-import { ArrowLeftIcon } from "../../../../utils/svg";
-import CommonButton from "../../../../components/CommonButton";
-import CommonSelect from "../../../../components/CommonSelect";
-import { useAppDispatch } from "../../../../store/hooks";
-import { updateRegisterData } from "../../../../store/slices/registeruserSlice";
-import { useRegistrationGuard } from "../../../../hooks/useRegistrationGuard";
+import AuthLayout from "../../../../../../components/AuthLayout";
+import CommonInput from "../../../../../../components/CommonInput";
+import { ArrowLeftIcon } from "../../../../../../utils/svg";
+import CommonButton from "../../../../../../components/CommonButton";
+import CommonSelect from "../../../../../../components/CommonSelect";
+import { useAppDispatch } from "../../../../../../store/hooks";
+import { updateRegisterData } from "../../../../../../store/slices/registeruserSlice";
+import { useRegistrationGuard } from "../../../../../../hooks/useRegistrationGuard";
 import { useNavigate } from "react-router-dom";
 
 type OrganizationFormValues = {

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { Form, Spin } from "antd";
 import styled from "styled-components";
-import AuthLayout from "../../../../components/AuthLayout";
-import CommonInput from "../../../../components/CommonInput";
-import { EnvelopeIcon } from "../../../../utils/svg";
-import CommonButton from "../../../../components/CommonButton";
-import { forgotPassword } from "../../../../service/Api_collecton";
+import AuthLayout from "../../../../../components/AuthLayout";
+import CommonInput from "../../../../../components/CommonInput";
+import { EnvelopeIcon } from "../../../../../utils/svg";
+import CommonButton from "../../../../../components/CommonButton";
+import { forgotPassword } from "../../../../../service/Api_collecton";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { loginSuccess } from "../../../../store/slices/authSlice";
-import { useAppDispatch } from "../../../../store/hooks";
+import { loginSuccess } from "../../../../../store/slices/authSlice";
+import { useAppDispatch } from "../../../../../store/hooks";
 
 type ForgotFormValues = {
   username: string;

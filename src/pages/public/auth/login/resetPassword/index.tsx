@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Form, Spin } from "antd";
 import styled from "styled-components";
-import AuthLayout from "../../../../components/AuthLayout";
-import { EyeIcon, EyeSlashIcon, LockIcon } from "../../../../utils/svg";
-import CommonInput from "../../../../components/CommonInput";
-import CommonButton from "../../../../components/CommonButton";
-import { resetPassword } from "../../../../service/Api_collecton";
-import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
-import { logout } from "../../../../store/slices/authSlice";
+import AuthLayout from "../../../../../components/AuthLayout";
+import { EyeIcon, EyeSlashIcon, LockIcon } from "../../../../../utils/svg";
+import CommonInput from "../../../../../components/CommonInput";
+import CommonButton from "../../../../../components/CommonButton";
+import { resetPassword } from "../../../../../service/Api_collecton";
+import { useAppDispatch, useAppSelector } from "../../../../../store/hooks";
+import { logout } from "../../../../../store/slices/authSlice";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 

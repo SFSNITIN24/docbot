@@ -1,8 +1,6 @@
 import React from "react";
 import { Form } from "antd";
 import styled from "styled-components";
-
-import CommonButton from "../../../../components/CommonButton";
 import { ArrowLeftIcon } from "../../../../utils/svg";
 import CommonRadioCardGroup, {
   type RadioCardOption,
@@ -11,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../../../components/AuthLayout";
 import { updateRegisterData } from "../../../../store/slices/registeruserSlice";
 import { useAppDispatch } from "../../../../store/hooks";
+import CommonButton from "../../../../components/CommonButton";
 
 const accountOptions: RadioCardOption[] = [
   {

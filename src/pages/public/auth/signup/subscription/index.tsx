@@ -1,9 +1,9 @@
 import React from "react";
-import CommonPackageCard from "../../../../components/CommonPackageCard";
-import AuthLayout from "../../../../components/AuthLayout";
 import styled from "styled-components";
-import { useAppSelector } from "../../../../store/hooks";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../../../../store/hooks";
+import AuthLayout from "../../../../../components/AuthLayout";
+import CommonPackageCard from "../../../../../components/CommonPackageCard";
 
 const enterprisePackages = [
   {

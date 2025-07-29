@@ -1,20 +1,17 @@
 import React from "react";
 import { Form, Spin } from "antd";
 import styled from "styled-components";
-import AuthLayout from "../../../../components/AuthLayout";
-import CommonInput from "../../../../components/CommonInput";
-import { ArrowLeftIcon, EyeIcon, EyeSlashIcon } from "../../../../utils/svg";
-import CommonButton from "../../../../components/CommonButton";
-import CommonSelect from "../../../../components/CommonSelect";
-import { useAppDispatch } from "../../../../store/hooks";
-import {
-  resetRegisterUser,
-  updateRegisterData,
-} from "../../../../store/slices/registeruserSlice";
-import { userRegister } from "../../../../service/Api_collecton";
-import { useRegistrationGuard } from "../../../../hooks/useRegistrationGuard";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../../../../store/hooks";
+import { useRegistrationGuard } from "../../../../../../hooks/useRegistrationGuard";
+import { userRegister } from "../../../../../../service/Api_collecton";
+import { resetRegisterUser, updateRegisterData } from "../../../../../../store/slices/registeruserSlice";
+import AuthLayout from "../../../../../../components/AuthLayout";
+import CommonInput from "../../../../../../components/CommonInput";
+import CommonSelect from "../../../../../../components/CommonSelect";
+import { ArrowLeftIcon, EyeIcon, EyeSlashIcon } from "../../../../../../utils/svg";
+import CommonButton from "../../../../../../components/CommonButton";
 type OrganizationFormValues = {
   firstName: string;
   lastName: string;

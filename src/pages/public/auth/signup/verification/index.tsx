@@ -1,32 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Spin } from "antd";
 import styled from "styled-components";
-import AuthLayout from "../../../../components/AuthLayout";
-import { ArrowLeftIcon } from "../../../../utils/svg";
-import CommonButton from "../../../../components/CommonButton";
+import AuthLayout from "../../../../../components/AuthLayout";
+import { ArrowLeftIcon } from "../../../../../utils/svg";
+import CommonButton from "../../../../../components/CommonButton";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
-import {
-  loginSuccess,
-  setToken,
-} from "../../../../store/slices/authSlice";
-import {
-  verifyPasswordResetOtp,
-  verifyTwoFactorAuthentication,
-} from "../../../../service/Api_collecton";
-import { toast } from "sonner";
+import { useAppSelector } from "../../../../../store/hooks";
+import { useRegistrationGuard } from "../../../../../hooks/useRegistrationGuard";
 
-const VerificationPage: React.FC = () => {
-  const dispatch = useAppDispatch();
+const TwoFactorVerificationPage: React.FC = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
   const { user } = useAppSelector((state) => state.auth);
-  const [loading, setLoading] = useState(false);
-  const pathname = window.location.pathname;
-
+  const registerUserDetail = useRegistrationGuard();
 
   useEffect(() => {
-    // If navigating to /reset, ensure user has resetToken
     if (window.location.pathname === "/reset" && (!user || !user.resetToken)) {
       navigate("/forgot", { replace: true });
     }
@@ -37,60 +25,40 @@ const VerificationPage: React.FC = () => {
       alert("Enter valid 6-digit OTP");
       return;
     }
-    setLoading(true);
-    if (user?.user_id) {
-      const payload = {
-        user_id: user?.user_id,
-        code: otp,
-        device_type: "web",
-        device_id: "web-device-id",
-      };
-      const response = await verifyTwoFactorAuthentication(payload);
-      setLoading(false);
-      dispatch(loginSuccess({ user: response?.data?.user }));
-      dispatch(setToken(response?.data?.token));
-      navigate("/chat");
-    } else {
-      const payload = {
-        email: user?.email,
-        otp: otp,
-      };
-      const response = await verifyPasswordResetOtp(payload);
-      setLoading(false);
-      if (response?.statusCode === 200 || response?.statusCode === 201) {
-        toast.success(response.message);
-        dispatch(loginSuccess({ user: response?.data }));
-        navigate("/reset");
-      } else {
-        toast.error(response?.message);
-      }
-    }
+    navigate(`/subscription?type=${registerUserDetail?.account_type}`);
   };
 
   const contactInfo =
-    pathname === "/otp"
-      ? (user?.phone_country_code ?? "") + " " + (user?.phone_number ?? "")
-      : user?.email ?? "";
+    user?.twoFaMethod === "phone_otp"
+      ? `${user?.phone_country_code ?? ""} ${user?.phone_number ?? ""}`
+      : "";
 
-  const verificationText = `Please enter the 6-digit verification code sent <br/> ${contactInfo}`;
+  const verificationText =
+    user?.twoFaMethod === "authenticator"
+      ? "Please scan the QR code to verify your account."
+      : `Please enter the 6-digit verification code sent to <br/> ${contactInfo}`;
 
   return (
     <AuthLayout
       dashboardUrl="/dashboard"
       topRightContent={
         <>
-          Not a member yet? <a href="/create-account">JOIN NOW</a>
+          Already have an account? <a href="/login">Sign in</a>
         </>
       }
       title="Verification"
       text={verificationText}
     >
-      <Spin spinning={loading}>
-        {/* <>
-          <p>Scan this QR code with Google Authenticator or Authy:</p>
-          <img src={user?.qr_code} alt="2FA QR Code" width="200" height="200" />
-        </> */}
+      <Spin spinning={false}>
         <FormWrapper>
+          {user?.twoFaMethod === "authenticator" && (
+            <QRCodeWrapper>
+              <img
+                src={user?.qr_code as string}
+                alt="Scan this QR Code with your Authenticator App"
+              />
+            </QRCodeWrapper>
+          )}
           <OtpWrapper>
             <Input.OTP
               prefixCls="otp-box"
@@ -102,7 +70,6 @@ const VerificationPage: React.FC = () => {
               onChange={setOtp}
             />
           </OtpWrapper>
-
           <p>Resend Code</p>
 
           <CommonButton
@@ -119,7 +86,7 @@ const VerificationPage: React.FC = () => {
   );
 };
 
-export default VerificationPage;
+export default TwoFactorVerificationPage;
 
 const FormWrapper = styled(Form)`
   width: 100%;
@@ -133,6 +100,7 @@ const FormWrapper = styled(Form)`
     letter-spacing: 0%;
     text-align: right;
     color: #007bff;
+    cursor: pointer;
   }
 `;
 
@@ -147,6 +115,7 @@ const OtpWrapper = styled.div`
     background: #fff;
     border-radius: 9px;
     border: none;
+    box-shadow: 0px 4px 18.3px 0px #00000040;
     text-align: center;
     font-size: 1.5rem;
     transition: border 0.2s;
@@ -158,5 +127,16 @@ const OtpWrapper = styled.div`
   .otp-box-input:focus {
     border: 2px solid #62a8bf;
     outline: none;
+  }
+`;
+
+const QRCodeWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  img {
+    width: 150px;
+    height: 150px;
+    box-shadow: 0px 4px 18.3px 0px #00000040;
   }
 `;

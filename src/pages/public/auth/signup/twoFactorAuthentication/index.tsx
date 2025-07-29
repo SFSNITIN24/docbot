@@ -1,18 +1,19 @@
 import React from "react";
 import { Form, Spin, Switch } from "antd";
 import styled from "styled-components";
-import AuthLayout from "../../../../components/AuthLayout";
-import CommonButton from "../../../../components/CommonButton";
-import { ArrowLeftIcon } from "../../../../utils/svg";
+import AuthLayout from "../../../../../components/AuthLayout";
+import CommonButton from "../../../../../components/CommonButton";
+import { ArrowLeftIcon } from "../../../../../utils/svg";
 import CommonRadioCardGroup, {
   type RadioCardOption,
-} from "../../../../components/CommonRadioCardGroup";
+} from "../../../../../components/CommonRadioCardGroup";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../../../store/hooks";
-import { twoFactorAuthentication } from "../../../../service/Api_collecton";
-import { updateRegisterData } from "../../../../store/slices/registeruserSlice";
-import { useRegistrationGuard } from "../../../../hooks/useRegistrationGuard";
-import { TwoFAMethod } from "../../../../enums";
+import { useAppDispatch } from "../../../../../store/hooks";
+import { twoFactorAuthentication } from "../../../../../service/Api_collecton";
+import { updateRegisterData } from "../../../../../store/slices/registeruserSlice";
+import { useRegistrationGuard } from "../../../../../hooks/useRegistrationGuard";
+import { TwoFAMethod } from "../../../../../enums";
+import { toast } from "sonner";
 
 const accountOptions: RadioCardOption[] = [
   {
@@ -28,7 +29,6 @@ const accountOptions: RadioCardOption[] = [
 type TwoFactorAuthenticationFormValues = {
   enableTwoFactor: string;
   accountType: TwoFAMethod;
-  promotionalDeals: boolean;
 };
 
 const TwoFactorAuthenticationPage: React.FC = () => {
@@ -37,12 +37,13 @@ const TwoFactorAuthenticationPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
   const registerUserDetail = useRegistrationGuard();
-
+  const enableTwoFactor = Form.useWatch("enableTwoFactor", form);
   const onFinish = async (values: unknown) => {
     const typedValues = values as TwoFactorAuthenticationFormValues;
+
     const params = new URLSearchParams();
     params.append("is2FAEnabled", typedValues.enableTwoFactor);
-    params.append("method", typedValues.accountType);
+    params.append("method", typedValues.accountType || "none");
     setLoading(true);
     const response = await twoFactorAuthentication(
       registerUserDetail?.id,
@@ -50,10 +51,20 @@ const TwoFactorAuthenticationPage: React.FC = () => {
     );
     setLoading(false);
     if (response?.statusCode === 200 || response?.statusCode === 201) {
+      toast.success(response.message);
       dispatch(
         updateRegisterData({ ...registerUserDetail, ...response?.data?.user })
       );
-      navigate(`/subscription?type=${registerUserDetail?.account_type}`);
+
+      if (response?.data?.user?.is_2FA_enabled === false) {
+        navigate(`/subscription?type=${registerUserDetail?.account_type}`);
+      } else {
+        navigate(
+          `/two-factor-verification?type=${registerUserDetail?.account_type}`
+        );
+      }
+    } else {
+      toast.error(response?.message);
     }
   };
   return (
@@ -89,18 +100,20 @@ const TwoFactorAuthenticationPage: React.FC = () => {
               <StyledSwitch />
             </Form.Item>
           </div>
-          <Form.Item
-            name="accountType"
-            initialValue={TwoFAMethod.PHONE_OTP}
-            valuePropName="value"
-            trigger="onChange"
-            style={{ marginBottom: "0px" }}
-          >
-            <CommonRadioCardGroup
-              options={accountOptions}
-              flexDirection="row"
-            />
-          </Form.Item>
+          {enableTwoFactor === true && (
+            <Form.Item
+              name="accountType"
+              initialValue={TwoFAMethod.PHONE_OTP}
+              valuePropName="value"
+              trigger="onChange"
+              style={{ marginBottom: "0px" }}
+            >
+              <CommonRadioCardGroup
+                options={accountOptions}
+                flexDirection="row"
+              />
+            </Form.Item>
+          )}
 
           <Form.Item style={{ marginBottom: "0px", marginTop: "20px" }}>
             <CommonButton bgcolor="#62A8BF" color="#fff" bghovercolor="#62A8BF">

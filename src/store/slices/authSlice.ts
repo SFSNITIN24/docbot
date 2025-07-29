@@ -3,20 +3,22 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 interface AuthState {
   user: Record<string, unknown> | null;
   token: string | null;
-  isTfaVerified: boolean;
+  rememberMeToken: string | null;
+  isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
   token: null,
-  isTfaVerified: false,
+  rememberMeToken: null,
+  isAuthenticated: false,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-   loginSuccess(
+    loginSuccess(
       state,
       action: PayloadAction<{ user: Record<string, unknown> }>
     ) {
@@ -25,16 +27,23 @@ const authSlice = createSlice({
     setToken(state, action: PayloadAction<string>) {
       state.token = action.payload;
     },
-    verifyTfa(state) {
-      state.isTfaVerified = true;
+    setRememberMeToken(state, action: PayloadAction<string>) {
+      state.rememberMeToken = action.payload;
+    },
+    setAuthenticated(state, action: PayloadAction<boolean>) {
+      state.isAuthenticated = action.payload;
+    },
+    clearRememberMeToken(state) {
+      state.rememberMeToken = null;
     },
     logout(state) {
       state.user = null;
       state.token = null;
-      state.isTfaVerified = false;
+      state.rememberMeToken = null;
+      state.isAuthenticated = false;
     },
   },
 });
 
-export const { loginSuccess, setToken,logout, verifyTfa } = authSlice.actions;
+export const { loginSuccess, setToken, setRememberMeToken,setAuthenticated, clearRememberMeToken, logout } = authSlice.actions;
 export default authSlice.reducer;
