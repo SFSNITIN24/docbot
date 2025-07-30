@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Form, Switch } from "antd";
 import styled from "styled-components";
@@ -10,6 +11,9 @@ type ChangeFormValues = {
   enableTwoFactor: boolean;
   accountType: string;
 };
+type TwoFactorProps = {
+  user: any;
+};
 const accountOptions: RadioCardOption[] = [
   {
     label: "Phone Number",
@@ -20,13 +24,13 @@ const accountOptions: RadioCardOption[] = [
     value: "authenticator",
   },
 ];
-const TwoFactorPage: React.FC = () => {
+const TwoFactorPage: React.FC<TwoFactorProps> = ({ user }) => {
   const [form] = Form.useForm();
   const onFinish = (values: unknown) => {
     const typedValues = values as ChangeFormValues;
     console.log("Form values:", typedValues);
   };
-
+  const enableTwoFactor = Form.useWatch("enableTwoFactor", form);
   return (
     <Container>
       <Header>
@@ -37,9 +41,8 @@ const TwoFactorPage: React.FC = () => {
         onFinish={onFinish}
         form={form}
         initialValues={{
-          enableTwoFactor: false,
-          accountType: "phone",
-          promotionalDeals: false,
+          enableTwoFactor: user?.is_2FA_enabled,
+          accountType: user?.twoFAMethod || "phone",
         }}
       >
         <div className="two-factor-switch">
@@ -53,15 +56,20 @@ const TwoFactorPage: React.FC = () => {
             <StyledSwitch />
           </Form.Item>
         </div>
-        <Form.Item
-          name="accountType"
-          initialValue="phone"
-          valuePropName="value"
-          trigger="onChange"
-          style={{ marginBottom: "0px" }}
-        >
-          <CommonRadioCardGroup options={accountOptions} flexDirection="row" />
-        </Form.Item>
+        {enableTwoFactor && (
+          <Form.Item
+            name="accountType"
+            initialValue="phone"
+            valuePropName="value"
+            trigger="onChange"
+            style={{ marginBottom: "0px" }}
+          >
+            <CommonRadioCardGroup
+              options={accountOptions}
+              flexDirection="row"
+            />
+          </Form.Item>
+        )}
 
         <Form.Item style={{ marginBottom: "0px", marginTop: "32px" }}>
           <CommonButton bgcolor="#62A8BF" color="#fff" bghovercolor="#62A8BF">

@@ -6,8 +6,7 @@ import { EyeIcon, EyeSlashIcon, LockIcon } from "../../../../../utils/svg";
 import CommonInput from "../../../../../components/CommonInput";
 import CommonButton from "../../../../../components/CommonButton";
 import { resetPassword } from "../../../../../service/Api_collecton";
-import { useAppDispatch, useAppSelector } from "../../../../../store/hooks";
-import { logout } from "../../../../../store/slices/authSlice";
+import {useAppSelector } from "../../../../../store/hooks";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
@@ -18,7 +17,6 @@ type ResetFormValues = {
 
 const ResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const onFinish = async (values: unknown) => {
@@ -33,7 +31,6 @@ const ResetPasswordPage: React.FC = () => {
     setLoading(false);
     if (response?.statusCode === 200 || response?.statusCode === 201) {
       toast.success(response.message);
-      dispatch(logout());
       navigate("/login");
     } else {
       toast.error(response?.message);
@@ -44,7 +41,7 @@ const ResetPasswordPage: React.FC = () => {
     if (!user || !user.resetToken) {
       navigate("/forgot", { replace: true });
     }
-  }, [user, navigate]);
+  }, [user]);
 
   return (
     <AuthLayout

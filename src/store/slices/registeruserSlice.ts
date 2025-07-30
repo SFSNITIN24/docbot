@@ -22,7 +22,6 @@ export const registeruserSlice = createSlice({
       Object.keys(state).forEach((key) => {
         delete state[key];
       });
-      
       localStorage.removeItem('registration_account_type');
     },
   },

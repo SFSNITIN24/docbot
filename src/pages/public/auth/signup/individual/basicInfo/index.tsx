@@ -25,7 +25,7 @@ type OrganizationFormValues = {
 const BasicInfoPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [countryCode, setCountryCode] = React.useState("+1");
+  const [countryCode, setCountryCode] = React.useState("+91");
   const [loading, setLoading] = React.useState(false);
   const registerUserDetail = useRegistrationGuard();
 
@@ -169,6 +169,23 @@ const BasicInfoPage: React.FC = () => {
                           }}
                         />
                         +1
+                      </>
+                    ),
+                  },
+                  {
+                    value: "+91",
+                    label: (
+                      <>
+                        <img
+                          src="https://flagcdn.com/in.svg"
+                          alt="IN"
+                          style={{
+                            width: 20,
+                            marginRight: 4,
+                            verticalAlign: "middle",
+                          }}
+                        />
+                        +91
                       </>
                     ),
                   },

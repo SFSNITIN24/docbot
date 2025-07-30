@@ -13,10 +13,12 @@ import {
   setAuthenticated,
 } from "../../../../../store/slices/authSlice";
 import {
+  resendOtp,
   verifyPasswordResetOtp,
   verifyTwoFactorAuthentication,
 } from "../../../../../service/Api_collecton";
 import { toast } from "sonner";
+import { OtpDeliveryMethod, OtpType } from "../../../../../enums";
 
 const VerificationPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -24,7 +26,26 @@ const VerificationPage: React.FC = () => {
   const [otp, setOtp] = useState("");
   const { user } = useAppSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
+   const [timeLeft, setTimeLeft] = useState(5 * 60);
+    const [resendEnabled, setResendEnabled] = useState(false);
   const pathname = window.location.pathname;
+
+    useEffect(() => {
+      if (timeLeft <= 0) {
+        setResendEnabled(true);
+        return;
+      }
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }, [timeLeft]);
+  
+    const formatTime = (seconds: number) => {
+      const min = String(Math.floor(seconds / 60)).padStart(2, "0");
+      const sec = String(seconds % 60).padStart(2, "0");
+      return `${min}:${sec}`;
+    };
 
   useEffect(() => {
     if (window.location.pathname === "/reset" && (!user || !user.resetToken)) {
@@ -77,15 +98,39 @@ const VerificationPage: React.FC = () => {
     }
   };
 
+  const handleResendOtp = async () => {
+    const payload =
+      user?.twoFAMethod === "phone_otp"
+        ? {
+            user_id: user?.user_id,
+            email: user?.email,
+            otpType: OtpType.TWO_FACTOR,
+            deliveryMethod: OtpDeliveryMethod.PHONE,
+          }
+        : {
+            user_id: user?.user_id,
+            email: user?.email,
+            otpType: OtpType.PASSWORD_RESET,
+            deliveryMethod: OtpDeliveryMethod.EMAIL,
+          };
+    const response = await resendOtp(payload);
+    if (response?.statusCode === 200 || response?.statusCode === 201) {
+      toast.success(response.message);
+       setTimeLeft(5 * 60);
+      setResendEnabled(false);
+    } else {
+      toast.error(response?.message);
+    }
+  };
   const contactInfo =
     pathname === "/otp"
-      ? user?.twoFaMethod === "phone_otp"
+      ? user?.twoFAMethod === "phone_otp"
         ? `${user?.phone_country_code ?? ""} ${user?.phone_number ?? ""}`
         : ""
       : user?.email ?? "";
 
   const verificationText =
-    pathname === "/otp" && user?.twoFaMethod === "authenticator"
+    pathname === "/otp" && user?.twoFAMethod === "authenticator"
       ? "Please scan the QR code to verify your account."
       : `Please enter the 6-digit verification code sent to <br/> ${contactInfo}`;
   return (
@@ -101,7 +146,7 @@ const VerificationPage: React.FC = () => {
     >
       <Spin spinning={loading}>
         <FormWrapper>
-          {user?.twoFaMethod === "authenticator" && (
+          {user?.twoFAMethod === "authenticator" && (
             <QRCodeWrapper>
               <img
                 src={user?.qr_code as string}
@@ -122,8 +167,8 @@ const VerificationPage: React.FC = () => {
           </OtpWrapper>
 
           {pathname === "/otp" &&
-          user?.twoFaMethod === "authenticator" ? null : (
-            <p>Resend Code</p>
+          user?.twoFAMethod === "authenticator" ? null :resendEnabled ? <p onClick={() => handleResendOtp()}>Resend Code</p>: (
+           <p>{formatTime(timeLeft)}</p>
           )}
 
           <CommonButton

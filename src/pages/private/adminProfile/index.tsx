@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Form } from "antd";
 import styled from "styled-components";
@@ -16,10 +17,17 @@ type ProfileFormValues = {
   promotionalDeals?: boolean;
 };
 
-const AdminProfile = () => {
+type AdminProfileProps = {
+  user: any;
+};
+const AdminProfile: React.FC<AdminProfileProps> = ({ user }) => {
   const [form] = Form.useForm();
-  const [countryCode, setCountryCode] = useState("+1");
-  const [profileImg, setProfileImg] = useState<string | null>(null);
+  const [countryCode, setCountryCode] = useState(
+    user.phone_country_code ?? "+1"
+  );
+  const [profileImg, setProfileImg] = useState<string | null>(
+    user.profileImageUrl ?? null
+  );
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -67,12 +75,10 @@ const AdminProfile = () => {
         layout="vertical"
         onFinish={onFinish}
         initialValues={{
-          firstName: "Asr01",
-          organizationName: "",
-          organizationType: undefined,
-          email: "",
-          phone: "",
-          promotionalDeals: false,
+          firstName: user.first_name || "",
+          lastName: user.last_name || "",
+          email: user.email || "",
+          phone: user.phone_number || "",
         }}
       >
         <Form.Item

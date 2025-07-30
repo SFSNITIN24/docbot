@@ -7,6 +7,8 @@ const VERIFY_2FA = "/auth/2fa/verify";
 const FORGOT_PASSWORD = "/auth/forgot-password";
 const VERIFY_PASSWORD_RESET_OTP = "/auth/verify-password-reset-otp"
 const RESET_PASSWORD = "/auth/reset-password";
+const RESEND_OTP = "/auth/resend-otp";
+
 
 export const userRegister = (payload: object) => {
   const res = postApi(USER_REGISTER, payload);
@@ -38,5 +40,10 @@ export const verifyPasswordResetOtp = (payload: object) => {
 
 export const resetPassword = (payload: object) => {
   const res = postApi(RESET_PASSWORD, payload);
+  return res;
+};
+
+export const resendOtp = (payload: object) => {
+  const res = postApi(RESEND_OTP, payload);
   return res;
 };

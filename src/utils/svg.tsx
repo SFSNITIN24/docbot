@@ -462,7 +462,7 @@ export const DropDownCheckIcon = () => {
   );
 };
 
-export const UploadFileInChatIcon: React.FC<UploadFileInChatIconProps> = () => {
+export const UploadFileInChatIcon :React.FC<UploadFileInChatIconProps> =() => {
   return (
     <svg
       width="21"

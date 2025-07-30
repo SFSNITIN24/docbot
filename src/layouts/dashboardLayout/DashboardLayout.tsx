@@ -13,9 +13,9 @@ import {
 } from "./style";
 import { deleteChat, setActiveChat } from "../../store/slices/chatSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import AdminProfile from "../../pages/public/adminProfile";
+import AdminProfile from "../../pages/private/adminProfile";
 import Profile from "../../pages/private/profile";
-import ChangePassword from "../../pages/public/changePassword";
+import ChangePassword from "../../pages/private/changePassword";
 import TwoFactor from "../../pages/private/twoFactor";
 import Header from "./Header";
 import DashboardSidebar from "./Sidebar";
@@ -155,7 +155,7 @@ const DashboardLayout: React.FC = () => {
           height={"80vh"}
           overFlow="auto"
         >
-          {userType === "enterprise" ? <AdminProfile /> : <Profile />}
+          {userType === "enterprise" ? <AdminProfile user={loggedUser} /> : <Profile user={loggedUser}/>}
         </ModalComponent>
       )}
       {changePasswordModalOpen && (
@@ -173,7 +173,7 @@ const DashboardLayout: React.FC = () => {
           setOpenModal={setTwoFactorModalOpen}
           width={"468px"}
         >
-          <TwoFactor />
+          <TwoFactor user={loggedUser}/>
         </ModalComponent>
       )}
       {deleteChatModal && (

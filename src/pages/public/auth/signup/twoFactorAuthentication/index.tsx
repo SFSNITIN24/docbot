@@ -40,7 +40,6 @@ const TwoFactorAuthenticationPage: React.FC = () => {
   const enableTwoFactor = Form.useWatch("enableTwoFactor", form);
   const onFinish = async (values: unknown) => {
     const typedValues = values as TwoFactorAuthenticationFormValues;
-
     const params = new URLSearchParams();
     params.append("is2FAEnabled", typedValues.enableTwoFactor);
     params.append("method", typedValues.accountType || "none");

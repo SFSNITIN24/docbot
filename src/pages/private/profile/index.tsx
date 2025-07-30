@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Form } from "antd";
 import styled from "styled-components";
@@ -18,16 +19,24 @@ type ProfileFormValues = {
   promotionalDeals?: boolean;
 };
 
+type ProfileProps = {
+  user: any;
+};
+
 const organizationTypeOptions = [
   { label: "Private", value: "private" },
   { label: "Public", value: "public" },
   { label: "Non-Profit", value: "nonprofit" },
 ];
 
-const MyProfile = () => {
+const MyProfile: React.FC<ProfileProps> = ({ user }) => {
   const [form] = Form.useForm();
-  const [countryCode, setCountryCode] = useState("+1");
-  const [profileImg, setProfileImg] = useState<string | null>(null);
+  const [countryCode, setCountryCode] = useState(
+    user.phone_country_code ?? "+1"
+  );
+  const [profileImg, setProfileImg] = useState<string | null>(
+    user.profileImageUrl ?? null
+  );
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -45,6 +54,7 @@ const MyProfile = () => {
     const countryCodewithPlus = `${countryCode}`;
     console.log({ ...typedValues, fullPhone, countryCodewithPlus });
   };
+  console.log(form.getFieldsValue());
 
   return (
     <ProfilelWrapper>
@@ -75,13 +85,12 @@ const MyProfile = () => {
         layout="vertical"
         onFinish={onFinish}
         initialValues={{
-          firstName: "Asr01",
-          lastName: "",
-          organizationName: "",
-          organizationType: undefined,
-          email: "",
-          phone: "",
-          promotionalDeals: false,
+          firstName: user.first_name || "",
+          lastName: user.last_name || "",
+          organizationName: user.organization_name || "",
+          organizationType: user.organization_type || "",
+          email: user.email || "",
+          phone: user.phone_number || "",
         }}
       >
         <Form.Item
@@ -176,12 +185,14 @@ const MyProfile = () => {
               value={countryCode}
               onChange={(val) => setCountryCode(val)}
             />
-            <CommonInput
-              type="tel"
-              placeholder="Enter Phone Number"
-              style={{ flex: 1 }}
-              inputBorder="1px solid #D9D9D9"
-            />
+            <Form.Item name="phone" noStyle>
+              <CommonInput
+                type="text"
+                placeholder="Enter Phone Number"
+                style={{ flex: 1 }}
+                inputBorder="1px solid #D9D9D9"
+              />
+            </Form.Item>
           </PhoneRow>
         </Form.Item>
 

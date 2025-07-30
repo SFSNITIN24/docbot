@@ -18,13 +18,13 @@ import ManageSubscription from "../pages/private/manageSubscription";
 import ForgotPasswordPage from "../pages/public/auth/login/forgotPassword";
 import VerificationPage from "../pages/public/auth/login/verification";
 import ResetPasswordPage from "../pages/public/auth/login/resetPassword";
-import CreateAccountPage from "../pages/public/auth/signup";
 import OrganizationInfoPage from "../pages/public/auth/signup/enterPrise/organizationInfo";
 import OrganizationAdminInfoPage from "../pages/public/auth/signup/enterPrise/organizationAdminInfo";
 import TwoFactorAuthenticationPage from "../pages/public/auth/signup/twoFactorAuthentication";
 import BasicInfoPage from "../pages/public/auth/signup/individual/basicInfo";
 import SubscriptionPage from "../pages/public/auth/signup/subscription";
 import TwoFactorVerificationPage from "../pages/public/auth/signup/verification";
+import CreateAccountPage from "../pages/public/auth/signup";
 
 // Guard for OTP Verification
 const OtpVerificationGuard = ({ children }: { children: React.ReactNode }) => {

@@ -22,8 +22,7 @@ const ChnagePasswordPage: React.FC = () => {
       <Header>
         <Title>Change Password</Title>
         <Description>
-          At least 9 characters, with uppercase and <br />
-          lowercase letters.
+          Enter a new password, not less than 8 characters.
         </Description>
       </Header>
 

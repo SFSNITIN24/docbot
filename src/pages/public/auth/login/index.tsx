@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Spin } from "antd";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +18,7 @@ import CommonButton from "../../../../components/CommonButton";
 import { useAppDispatch } from "../../../../store/hooks";
 import {
   loginSuccess,
+  logout,
   setAuthenticated,
   setRememberMeToken,
   setToken,
@@ -59,10 +60,11 @@ const LoginPage: React.FC = () => {
           dispatch(setRememberMeToken(response.data.token));
         }
         navigate("/chat");
+      } else {
+        dispatch(loginSuccess({ user: response.data || response.data.user }));
+        toast.success(response.message);
+        navigate("/otp");
       }
-      dispatch(loginSuccess({ user: response.data }));
-      toast.success(response.message);
-      navigate("/otp");
     } else if (response?.statusCode === 401) {
       setResponseMessage(response.data.status);
       form.resetFields();
@@ -70,6 +72,20 @@ const LoginPage: React.FC = () => {
       toast.error(response?.message);
     }
   };
+
+  useEffect(() => {
+    if (responseMessage) {
+      const timeout = setTimeout(() => {
+        setResponseMessage("");
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [responseMessage]);
+  
+  useEffect(() => {
+    dispatch(logout());
+  }, []);
 
   return (
     <AuthLayout
